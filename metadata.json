@@ -1,0 +1,6 @@
+{
+  "name": "Применение спутниковых съёмок для многолетнего мониторинга природных процессов",
+  "description": "Спутниковый мониторинг многолетней динамики природных процессов и зеленых зон мегаполисов России на базе данных Sentinel-2.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

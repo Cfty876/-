@@ -1,0 +1,4202 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Применение спутниковых съёмок для многолетнего мониторинга природных процессов</title>
+    <meta name="description" content="Применение спутниковых съёмок Sentinel-2 для многолетнего мониторинга природных процессов и динамики зеленых зон мегаполисов России." />
+    <meta property="og:title" content="Применение спутниковых съёмок для многолетнего мониторинга природных процессов" />
+    <meta property="og:description" content="Применение спутниковых съёмок Sentinel-2 для многолетнего мониторинга природных процессов и динамики зеленых зон мегаполисов России." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <style>
+      :root {
+        --bg: #ffffff;
+        --bg-soft: #f9fafb;
+        --bg-subtle: #f3f4f6;
+        --bg-card: #ffffff;
+        --accent: #ee530d;
+        --accent-gradient: linear-gradient(to right, #ee530d 0%, #ee530d 100%);
+        --accent-hover: #d74808;
+        --accent-light: #fff2ea;
+        --accent-border: #fed3be;
+        --accent-ring: rgba(238, 83, 13, 0.18);
+        --text-primary: #111827;
+        --text-secondary: #6b7280;
+        --text-muted: #9ca3af;
+        --border: #e5e7eb;
+        --border-hover: #d1d5db;
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 20px;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+        --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        font-family: var(--font-sans);
+        color: var(--text-primary);
+        background-color: var(--bg);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body {
+        min-height: 100vh;
+        line-height: 1.6;
+        display: flex;
+        flex-direction: column;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+
+      /* Container */
+      .container {
+        width: 100%;
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* Navigation */
+      header.navbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+        transition: all 0.2s ease;
+      }
+
+      .navbar-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 72px;
+      }
+
+      /* Clean Nav Brand */
+      .nav-brand-clean {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: var(--text-primary);
+        letter-spacing: -0.01em;
+        transition: color 0.15s ease;
+      }
+
+      .nav-brand-clean:hover {
+        color: var(--accent);
+      }
+
+      .nav-brand-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 3px rgba(238, 83, 13, 0.2);
+        flex-shrink: 0;
+      }
+
+      .nav-brand-text {
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      nav.nav-links {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+      }
+
+      nav.nav-links a {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        transition: color 0.15s ease;
+      }
+
+      nav.nav-links a:hover {
+        color: var(--accent);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 0.92rem;
+        font-weight: 600;
+        padding: 12px 26px;
+        border-radius: 9999px;
+        transition: all 0.15s ease;
+        white-space: nowrap;
+      }
+
+      .btn-accent {
+        background: var(--accent-gradient);
+        color: #ffffff;
+        box-shadow: 0 2px 8px rgba(238, 83, 13, 0.28);
+      }
+
+      .btn-accent:hover {
+        background: linear-gradient(to right, #d74808 0%, #d74808 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(238, 83, 13, 0.38);
+      }
+
+      .btn-secondary {
+        background-color: var(--bg-soft);
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+      }
+
+      .btn-secondary:hover {
+        background-color: #ffffff;
+        border-color: var(--border-hover);
+      }
+
+      .btn-sm {
+        padding: 7px 18px;
+        font-size: 0.85rem;
+      }
+
+      /* Mobile Nav Toggle */
+      .mobile-toggle {
+        display: none;
+        padding: 8px;
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+      }
+
+      @media (max-width: 768px) {
+        nav.nav-links {
+          display: none;
+        }
+        .nav-btn-desktop {
+          display: none;
+        }
+        .mobile-toggle {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 44px;
+          min-height: 44px;
+        }
+        .navbar-content {
+          height: 64px;
+        }
+        .nav-brand-text {
+          font-size: 0.95rem;
+        }
+      }
+
+      .mobile-menu {
+        display: none;
+        padding: 16px 24px 20px;
+        border-bottom: 1px solid var(--border);
+        background: #ffffff;
+      }
+
+      .mobile-menu.open {
+        display: block;
+      }
+
+      .mobile-menu a {
+        display: block;
+        padding: 12px 0;
+        font-weight: 600;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--bg-soft);
+      }
+
+      /* Hero Section */
+      #hero {
+        min-height: calc(100vh - 72px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 64px 0;
+        background: radial-gradient(circle at 50% -15%, #fff1ea 0%, #ffffff 65%);
+        border-bottom: 1px solid var(--border);
+        position: relative;
+      }
+
+      .hero-badge-wrap {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 24px;
+      }
+
+      .badge-orange {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background-color: var(--accent-light);
+        color: var(--accent);
+        border: 1px solid var(--accent-border);
+        padding: 6px 16px;
+        border-radius: 9999px;
+        font-size: 0.86rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        text-align: center;
+      }
+
+      .badge-orange-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent-gradient);
+      }
+
+      .hero-title {
+        text-align: center;
+        font-size: clamp(1.9rem, 4.2vw, 3rem);
+        font-weight: 800;
+        line-height: 1.2;
+        letter-spacing: -0.025em;
+        color: var(--text-primary);
+        max-width: 980px;
+        margin: 0 auto 20px;
+      }
+
+      .hero-subtitle {
+        text-align: center;
+        font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+        font-weight: 500;
+        color: var(--text-secondary);
+        max-width: 720px;
+        margin: 0 auto 36px;
+        line-height: 1.5;
+      }
+
+      .hero-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin-bottom: 0;
+        flex-wrap: wrap;
+      }
+
+      @media (max-width: 768px) {
+        #hero {
+          min-height: calc(100vh - 64px);
+          min-height: calc(100dvh - 64px);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 36px 0;
+          box-sizing: border-box;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .hero-metrics {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+      }
+
+      .metric-card {
+        background-color: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 24px 20px;
+        text-align: center;
+        transition: transform 0.15s ease, border-color 0.15s ease;
+      }
+
+      .metric-card:hover {
+        border-color: var(--accent-border);
+        transform: translateY(-2px);
+      }
+
+      .metric-val {
+        font-size: 2.3rem;
+        font-weight: 800;
+        color: var(--accent);
+        line-height: 1.1;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+
+      .metric-label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+      }
+
+      .metric-desc {
+        font-size: 0.82rem;
+        color: var(--text-secondary);
+      }
+
+      /* Section Common */
+      section {
+        padding: 84px 0;
+      }
+
+      .section-header {
+        text-align: center;
+        max-width: 680px;
+        margin: 0 auto 48px;
+      }
+
+      .section-eyebrow {
+        display: inline-block;
+        font-size: 0.84rem;
+        font-weight: 700;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 8px;
+      }
+
+      .section-title {
+        font-size: clamp(1.75rem, 3.2vw, 2.35rem);
+        font-weight: 800;
+        color: var(--text-primary);
+        letter-spacing: -0.02em;
+        line-height: 1.25;
+        margin-bottom: 12px;
+      }
+
+      .section-subtitle {
+        font-size: 1.05rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+
+      /* About & Archetypes Section */
+      #about {
+        background-color: #ffffff;
+      }
+
+      .about-lead-box {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 32px 36px;
+        margin-bottom: 36px;
+        display: flex;
+        align-items: flex-start;
+        gap: 24px;
+      }
+
+      .about-lead-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        background: var(--accent-light);
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .about-lead-text h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+      }
+
+      .about-lead-text p {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        line-height: 1.65;
+      }
+
+      .essence-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+
+      @media (max-width: 860px) {
+        .essence-grid {
+          grid-template-columns: 1fr;
+        }
+        .about-lead-box {
+          flex-direction: column;
+          padding: 24px;
+        }
+      }
+
+      .essence-card {
+        background-color: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 28px 24px;
+        transition: all 0.2s ease;
+        position: relative;
+      }
+
+      .essence-card:hover {
+        border-color: var(--border-accent);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+      }
+
+      .essence-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background-color: var(--accent-light);
+        color: var(--accent);
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 16px;
+      }
+
+      .essence-card h4 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+      }
+
+      .essence-card p {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+
+      /* Cities Section */
+      #cities {
+        background-color: var(--bg-soft);
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+      }
+
+      /* Tabs Container */
+      .city-tabs-nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+      }
+
+      .hero-title-accent {
+        color: var(--accent);
+      }
+
+      /* Dedicated Interactive Assistant Section */
+      .assistant-section {
+        padding: 76px 0 84px;
+        background-color: var(--bg-soft);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .hero-assistant-box {
+        max-width: 860px;
+        margin: 0 auto;
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+        overflow: hidden;
+        text-align: left;
+      }
+
+      .assistant-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 22px;
+        background: var(--bg-soft);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .assistant-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .status-pill {
+        font-size: 0.76rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        background: #ffffff;
+        border: 1px solid var(--border);
+        padding: 3px 10px;
+        border-radius: 9999px;
+      }
+
+      .assistant-feed {
+        padding: 22px 24px;
+        min-height: 140px;
+        max-height: 320px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: #ffffff;
+      }
+
+      .feed-bubble {
+        padding: 12px 18px;
+        border-radius: 16px;
+        font-size: 0.92rem;
+        line-height: 1.55;
+        max-width: 88%;
+        animation: fadeIn 0.2s ease;
+      }
+
+      .feed-bot {
+        background: var(--bg-soft);
+        color: var(--text-primary);
+        align-self: flex-start;
+        border-top-left-radius: 4px;
+        border: 1px solid var(--border);
+      }
+
+      .feed-user {
+        background: var(--accent-gradient);
+        color: #ffffff;
+        align-self: flex-end;
+        border-top-right-radius: 4px;
+      }
+
+      .assistant-chips-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        background: #fafafa;
+        border-top: 1px solid var(--border);
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: thin;
+      }
+
+      .query-chip {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 9999px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        flex-shrink: 0;
+      }
+
+      .query-chip:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: #fff8f5;
+      }
+
+      .assistant-input-row {
+        display: flex;
+        gap: 10px;
+        padding: 14px 20px;
+        background: #ffffff;
+        border-top: 1px solid var(--border);
+      }
+
+      .assistant-input-field {
+        flex: 1;
+        padding: 11px 18px;
+        border: 1px solid var(--border);
+        border-radius: 9999px;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.15s ease;
+      }
+
+      .assistant-input-field:focus {
+        border-color: var(--accent);
+      }
+
+      /* Marquee Running Ticker Ribbon */
+      .marquee-ribbon {
+        background: #111827;
+        color: #ffffff;
+        padding: 14px 0;
+        overflow: hidden;
+        white-space: nowrap;
+        font-size: 0.86rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        border-top: 1px solid #1f2937;
+        border-bottom: 1px solid #1f2937;
+        user-select: none;
+      }
+
+      .marquee-track {
+        display: inline-flex;
+        animation: marqueeScroll 30s linear infinite;
+      }
+
+      .marquee-phrase {
+        display: inline-flex;
+        align-items: center;
+        gap: 20px;
+        padding: 0 20px;
+      }
+
+      .marquee-sep {
+        color: var(--accent);
+        font-weight: 900;
+      }
+
+      @keyframes marqueeScroll {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+
+      /* Comparison Section */
+      #comparison {
+        background-color: #ffffff;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .comparison-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        max-width: 1040px;
+        margin: 0 auto;
+      }
+
+      @media (max-width: 768px) {
+        .comparison-columns {
+          grid-template-columns: 1fr;
+          gap: 36px;
+        }
+      }
+
+      .comparison-col-header {
+        font-size: 1.45rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .comp-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .comp-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+      }
+
+      .comp-badge-x {
+        font-size: 0.84rem;
+        font-weight: 800;
+        color: #6b7280;
+        background: #f3f4f6;
+        padding: 4px 8px;
+        border-radius: 6px;
+        flex-shrink: 0;
+        line-height: 1;
+      }
+
+      .comp-badge-check {
+        font-size: 0.84rem;
+        font-weight: 800;
+        color: var(--accent);
+        background: var(--accent-light);
+        padding: 4px 8px;
+        border-radius: 6px;
+        flex-shrink: 0;
+        line-height: 1;
+      }
+
+      .comp-content-title {
+        font-weight: 700;
+        font-size: 0.96rem;
+        color: var(--text-primary);
+        margin-bottom: 3px;
+      }
+
+      .comp-content-desc {
+        font-size: 0.88rem;
+        color: var(--text-secondary);
+        line-height: 1.55;
+      }
+
+      /* Key Impact Numbers Grid */
+      .impact-metrics-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        max-width: 900px;
+        margin: 48px auto 0;
+      }
+
+      @media (max-width: 640px) {
+        .impact-metrics-row {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+      }
+
+      .impact-card {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 28px 20px;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.15s ease, border-color 0.15s ease;
+      }
+
+      .impact-card:hover {
+        border-color: var(--accent-border);
+        transform: translateY(-2px);
+      }
+
+      .impact-val {
+        font-size: 2.6rem;
+        font-weight: 800;
+        color: var(--accent);
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        margin-bottom: 6px;
+      }
+
+      .impact-label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+      }
+
+      .impact-sub {
+        font-size: 0.82rem;
+        color: var(--text-secondary);
+      }
+
+      /* City Key Points */
+      .city-points-box {
+        margin: 24px 0 28px;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .city-point-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 0.92rem;
+        color: var(--text-primary);
+      }
+
+      .city-point-check {
+        color: var(--accent);
+        font-weight: 800;
+        flex-shrink: 0;
+      }
+
+      /* Accordion Methodology */
+      .methodology-accordion {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        max-width: 900px;
+        margin: 0 auto 36px;
+      }
+
+      .accordion-node {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: #ffffff;
+        overflow: hidden;
+        transition: border-color 0.15s ease;
+      }
+
+      .accordion-node.active {
+        border-color: var(--accent-border);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .accordion-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 22px 26px;
+        cursor: pointer;
+        user-select: none;
+        background: #ffffff;
+        transition: background-color 0.15s ease;
+      }
+
+      .accordion-header:hover {
+        background-color: var(--bg-soft);
+      }
+
+      .accordion-header-info {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .accordion-num {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--accent);
+        letter-spacing: -0.01em;
+      }
+
+      .accordion-name {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .accordion-badge-state {
+        font-family: monospace;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--accent);
+        background: var(--accent-light);
+        padding: 2px 10px;
+        border-radius: 6px;
+      }
+
+      .accordion-body {
+        display: none;
+        padding: 0 26px 24px;
+        color: var(--text-secondary);
+        font-size: 0.92rem;
+        line-height: 1.65;
+      }
+
+      .accordion-node.active .accordion-body {
+        display: block;
+      }
+
+      /* Bottom Inquiry Section */
+      #inquiry {
+        background: #ffffff;
+        border-top: 1px solid var(--border);
+        padding: 80px 0;
+      }
+
+      .inquiry-wrap {
+        max-width: 680px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .inquiry-title {
+        font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+      }
+
+      .inquiry-subtitle {
+        font-size: 1.02rem;
+        color: var(--text-secondary);
+        margin-bottom: 28px;
+        line-height: 1.6;
+      }
+
+      .inquiry-form-row {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        max-width: 520px;
+        margin: 0 auto 20px;
+        flex-wrap: wrap;
+      }
+
+      .inquiry-input {
+        flex: 1;
+        min-width: 240px;
+        padding: 13px 20px;
+        border-radius: 9999px;
+        border: 1px solid var(--border);
+        background: #ffffff;
+        font-size: 0.94rem;
+        outline: none;
+      }
+
+      .inquiry-input:focus {
+        border-color: var(--accent);
+      }
+
+      .inquiry-tags {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 28px;
+      }
+
+      .inquiry-tag {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 9999px;
+        padding: 5px 14px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .city-tab-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 9999px;
+        font-size: 0.94rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        background: #ffffff;
+        border: 1px solid var(--border);
+        transition: all 0.15s ease;
+      }
+
+      .city-tab-btn:hover {
+        color: var(--text-primary);
+        border-color: var(--border-hover);
+      }
+
+      .city-tab-btn.active {
+        background: var(--accent-gradient);
+        color: #ffffff;
+        border-color: var(--accent);
+        box-shadow: 0 2px 8px rgba(238, 83, 13, 0.3);
+      }
+
+      .city-tab-badge {
+        font-size: 0.76rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.06);
+      }
+
+      .city-tab-btn.active .city-tab-badge {
+        background: rgba(255, 255, 255, 0.25);
+        color: #ffffff;
+      }
+
+      /* City Content Panel */
+      .city-panel {
+        display: none;
+        animation: fadeIn 0.25s ease forwards;
+      }
+
+      .city-panel.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .city-card {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        padding: 36px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      @media (max-width: 768px) {
+        .city-card {
+          padding: 24px;
+        }
+      }
+
+      .city-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+      }
+
+      .city-title-group h3 {
+        font-size: 1.85rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+        margin-bottom: 6px;
+      }
+
+      .city-archetype-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--accent);
+        background: var(--accent-light);
+        border: 1px solid var(--accent-border);
+        padding: 4px 12px;
+        border-radius: 9999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .city-intro-desc {
+        max-width: 680px;
+        font-size: 1.02rem;
+        color: var(--text-secondary);
+        line-height: 1.65;
+        margin-top: 10px;
+      }
+
+      /* Mini Stats 3 */
+      .city-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 32px;
+      }
+
+      @media (max-width: 640px) {
+        .city-stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .city-stat-box {
+        background-color: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .city-stat-label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .city-stat-value {
+        font-size: 1.6rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .stat-loss {
+        color: #dc2626;
+      }
+
+      .stat-growth {
+        color: var(--accent);
+      }
+
+      .stat-balance {
+        color: #4b5563;
+      }
+
+      .city-stat-sub {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+      }
+
+      /* GEE Screenshots Grid */
+      .gee-section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .gee-section-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .gee-tag {
+        font-size: 0.78rem;
+        font-weight: 600;
+        background: #eef2ff;
+        color: #4338ca;
+        padding: 2px 8px;
+        border-radius: 4px;
+      }
+
+      .gee-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 24px;
+      }
+
+      @media (max-width: 768px) {
+        .gee-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Gray Placeholder Box for Earth Engine Screenshots */
+      .gee-placeholder {
+        background-color: #f3f4f6;
+        border: 2px dashed #d1d5db;
+        border-radius: var(--radius-lg);
+        min-height: 280px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        transition: all 0.2s ease;
+        overflow: hidden;
+      }
+
+      .gee-placeholder:hover {
+        border-color: var(--accent);
+        background-color: #f9fafb;
+      }
+
+      .gee-placeholder-icon {
+        width: 48px;
+        height: 48px;
+        color: #9ca3af;
+        margin-bottom: 12px;
+      }
+
+      .gee-placeholder-badge {
+        display: inline-block;
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 3px 8px;
+        border-radius: 4px;
+        background: #e5e7eb;
+        color: #4b5563;
+        margin-bottom: 8px;
+      }
+
+      .gee-placeholder-text {
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        max-width: 320px;
+        margin-bottom: 6px;
+        line-height: 1.4;
+      }
+
+      .gee-placeholder-hint {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        max-width: 300px;
+        line-height: 1.4;
+      }
+
+      .gee-code-comment-chip {
+        margin-top: 14px;
+        font-family: monospace;
+        font-size: 0.72rem;
+        background: rgba(0, 0, 0, 0.05);
+        color: #6b7280;
+        padding: 4px 10px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+      }
+
+      /* Interactive Preview Graphic inside Placeholder to showcase GEE outputs */
+      .gee-mock-preview {
+        width: 100%;
+        height: 160px;
+        margin-top: 16px;
+        border-radius: var(--radius-sm);
+        background: #ffffff;
+        border: 1px solid var(--border);
+        display: flex;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .mock-half {
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+
+      .mock-left {
+        background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+        color: #166534;
+        border-right: 2px solid #ffffff;
+      }
+
+      .mock-right {
+        background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+        color: #9a3412;
+      }
+
+      .mock-diff-map {
+        width: 100%;
+        height: 100%;
+        background: #ffffff;
+        position: relative;
+        background-image: radial-gradient(#ef4444 1.5px, transparent 1.5px), radial-gradient(#f97316 1.5px, #ffffff 1.5px);
+        background-size: 24px 24px;
+        background-position: 0 0, 12px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Color Map Legend */
+      .gee-legend {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        padding: 12px 16px;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        margin-bottom: 24px;
+        font-size: 0.84rem;
+        flex-wrap: wrap;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        color: var(--text-secondary);
+      }
+
+      .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      .dot-red {
+        background-color: #ef4444;
+      }
+
+      .dot-orange {
+        background: var(--accent-gradient);
+      }
+
+      .dot-green {
+        background-color: #22c55e;
+      }
+
+      /* City Takeaway Conclusion */
+      .city-takeaway-box {
+        background: #fff6f1;
+        border: 1px solid var(--accent-border);
+        border-radius: var(--radius-lg);
+        padding: 20px 24px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .takeaway-icon {
+        color: var(--accent);
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .takeaway-text h5 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+      }
+
+      .takeaway-text p {
+        font-size: 0.92rem;
+        color: #4b5563;
+        line-height: 1.55;
+      }
+
+      /* Methodology Section */
+      #methodology {
+        background-color: #ffffff;
+      }
+
+      .steps-chain {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        position: relative;
+        margin-bottom: 48px;
+      }
+
+      @media (max-width: 860px) {
+        .steps-chain {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+      }
+
+      .step-item {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 32px 24px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.15s ease, border-color 0.15s ease;
+      }
+
+      .step-item:hover {
+        border-color: var(--border-accent);
+        transform: translateY(-2px);
+      }
+
+      .step-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      .step-number {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--accent);
+        line-height: 1;
+        letter-spacing: -0.02em;
+      }
+
+      .step-pill {
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 4px;
+        background: #ffffff;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      .step-item h4 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+      }
+
+      .step-item p {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin-bottom: 16px;
+        flex-grow: 1;
+      }
+
+      .step-code-badge {
+        display: inline-block;
+        font-family: monospace;
+        font-size: 0.8rem;
+        background: #ffffff;
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+        padding: 6px 10px;
+        border-radius: var(--radius-sm);
+      }
+
+      /* Tech Pipeline Card */
+      .pipeline-card {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+      }
+
+      .pipeline-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .pipeline-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .pipeline-flow {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .pipeline-node {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        padding: 10px 16px;
+        border-radius: var(--radius-md);
+        font-size: 0.88rem;
+        font-weight: 600;
+        white-space: nowrap;
+        color: var(--text-primary);
+      }
+
+      .pipeline-arrow {
+        color: var(--accent);
+        font-weight: 800;
+      }
+
+      /* Team Section */
+      #team {
+        background-color: var(--bg-soft);
+        border-top: 1px solid var(--border);
+      }
+
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-bottom: 40px;
+      }
+
+      @media (max-width: 860px) {
+        .team-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .team-card {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .team-role {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 6px;
+      }
+
+      .team-name {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+      }
+
+      .team-track {
+        font-size: 0.88rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      /* Code Modal */
+      .modal-backdrop {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(17, 24, 39, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 200;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .modal-backdrop.open {
+        display: flex;
+      }
+
+      .modal-box {
+        background: #ffffff;
+        border-radius: var(--radius-xl);
+        max-width: 760px;
+        width: 100%;
+        max-height: 85vh;
+        overflow-y: auto;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        padding: 28px;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .modal-close-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+      }
+
+      .modal-close-btn:hover {
+        color: var(--text-primary);
+      }
+
+      pre.code-block {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 16px;
+        border-radius: var(--radius-md);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 0.84rem;
+        line-height: 1.5;
+        overflow-x: auto;
+      }
+
+      /* Footer */
+      footer {
+        background-color: #ffffff;
+        border-top: 1px solid var(--border);
+        padding: 48px 0 36px;
+      }
+
+      .footer-grid {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 40px;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+      }
+
+      .footer-brand {
+        max-width: 420px;
+      }
+
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+      }
+
+      .footer-desc {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+
+      .footer-links-group h6 {
+        font-size: 0.84rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+      }
+
+      .footer-links-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .footer-links-list a {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        transition: color 0.15s ease;
+      }
+
+      .footer-links-list a:hover {
+        color: var(--accent);
+      }
+
+      .footer-bottom {
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      .footer-badges {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .footer-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        padding: 3px 10px;
+        border-radius: 9999px;
+      }
+
+      /* =========================================
+         Language Switcher ("Плашка с переводом")
+         ========================================= */
+      .lang-switch-wrap {
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .lang-switch-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: #f4f4f5;
+        border: 1px solid var(--border);
+        border-radius: 9999px;
+        padding: 3px 4px 3px 9px;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        user-select: none;
+        outline: none;
+        font-family: inherit;
+      }
+
+      .lang-switch-btn:hover {
+        border-color: var(--accent-border);
+        background: #fff7ed;
+        box-shadow: 0 2px 10px rgba(234, 88, 12, 0.1);
+      }
+
+      .lang-globe-icon {
+        color: var(--text-secondary);
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.25s ease;
+        flex-shrink: 0;
+      }
+
+      .lang-switch-btn:hover .lang-globe-icon {
+        color: var(--accent);
+        transform: rotate(35deg);
+      }
+
+      .lang-pills-box {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        background: #ffffff;
+        border-radius: 9999px;
+        padding: 2px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+      }
+
+      .lang-pill-item {
+        position: relative;
+        z-index: 2;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        padding: 3px 8px;
+        border-radius: 9999px;
+        color: var(--text-secondary);
+        transition: color 0.25s ease;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .lang-pill-slider {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        bottom: 2px;
+        width: calc(50% - 2px);
+        background: var(--accent-gradient);
+        border-radius: 9999px;
+        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 2px 6px rgba(234, 88, 12, 0.35);
+        z-index: 1;
+      }
+
+      /* Active indicator states driven by html[lang] */
+      html[lang="ru"] .lang-pill-item[data-lang="ru"],
+      html:not([lang]) .lang-pill-item[data-lang="ru"] {
+        color: #ffffff;
+      }
+      html[lang="ru"] .lang-pill-slider,
+      html:not([lang]) .lang-pill-slider {
+        transform: translateX(0);
+      }
+
+      html[lang="en"] .lang-pill-item[data-lang="en"] {
+        color: #ffffff;
+      }
+      html[lang="en"] .lang-pill-item[data-lang="ru"] {
+        color: var(--text-secondary);
+      }
+      html[lang="en"] .lang-pill-slider {
+        transform: translateX(100%);
+      }
+
+      /* Mobile language switcher row */
+      .mobile-lang-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 4px 6px;
+        margin-top: 10px;
+        border-top: 1px solid var(--border);
+      }
+
+      .mobile-lang-label {
+        font-size: 0.86rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      /* Smooth cross-fade when switching language */
+      .i18n-node {
+        transition: opacity 0.18s ease, transform 0.18s ease;
+      }
+      .lang-switching-out {
+        opacity: 0.35;
+        transform: translateY(-1px);
+      }
+
+      /* =========================================
+         GEE Research Satellite Cards & Map Visuals
+         ========================================= */
+      .gee-research-card {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .gee-research-card:hover {
+        border-color: var(--accent-border);
+        box-shadow: 0 8px 28px rgba(234, 88, 12, 0.08);
+      }
+
+      .gee-research-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: var(--bg-soft);
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .gee-research-card-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.02rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        letter-spacing: -0.01em;
+      }
+
+      .gee-research-card-title svg {
+        color: var(--accent);
+        flex-shrink: 0;
+      }
+
+      .gee-research-badges {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .gee-pill-tag {
+        font-size: 0.74rem;
+        font-weight: 700;
+        background: #ffffff;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        padding: 3px 9px;
+        border-radius: 9999px;
+      }
+
+      .gee-pill-tag.highlight {
+        background: var(--accent-light);
+        border-color: var(--accent-border);
+        color: var(--accent);
+      }
+
+      .gee-map-stage {
+        position: relative;
+        width: 100%;
+        background: #090d16;
+        min-height: 420px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        cursor: pointer;
+      }
+
+      .gee-map-img {
+        width: 100%;
+        height: auto;
+        max-height: 600px;
+        object-fit: contain;
+        display: block;
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        background: #090d16;
+      }
+
+      .gee-map-stage:hover .gee-map-img {
+        transform: scale(1.015);
+      }
+
+      /* Exact snapshot overlay banner identical to Earth Engine UI */
+      .gee-snapshot-overlay {
+        position: absolute;
+        bottom: 18px;
+        left: 18px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 12px;
+        padding: 13px 18px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+        max-width: 420px;
+        z-index: 10;
+        pointer-events: none;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+      }
+
+      @media (max-width: 640px) {
+        .gee-snapshot-overlay {
+          bottom: 12px;
+          left: 12px;
+          right: 12px;
+          max-width: none;
+          padding: 10px 14px;
+        }
+      }
+
+      .gee-overlay-heading {
+        font-size: 0.92rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 7px;
+        letter-spacing: -0.01em;
+        line-height: 1.3;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        padding-bottom: 6px;
+      }
+
+      .gee-overlay-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.82rem;
+        color: #334155;
+        margin-bottom: 4px;
+        line-height: 1.4;
+      }
+
+      .gee-overlay-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .gee-overlay-item strong {
+        color: #0f172a;
+      }
+
+      .gee-zoom-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: rgba(15, 23, 42, 0.82);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 9999px;
+        padding: 6px 13px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        z-index: 10;
+      }
+
+      .gee-zoom-btn:hover {
+        background: var(--accent);
+        border-color: var(--accent);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(234, 88, 12, 0.4);
+      }
+
+      /* Lightbox Modal for Fullscreen Map Inspection */
+      .map-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.92);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 99999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        animation: modalFadeIn 0.2s ease-out;
+      }
+
+      .map-modal.open {
+        display: flex;
+      }
+
+      @keyframes modalFadeIn {
+        from { opacity: 0; transform: scale(0.98); }
+        to { opacity: 1; transform: scale(1); }
+      }
+
+      .map-modal-dialog {
+        position: relative;
+        max-width: 1280px;
+        width: 100%;
+        max-height: 92vh;
+        background: #0b0f19;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .map-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #151d2e;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+      }
+
+      .map-modal-title {
+        font-weight: 700;
+        font-size: 0.98rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .map-modal-close {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: #ffffff;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s ease;
+      }
+
+      .map-modal-close:hover {
+        background: var(--accent);
+      }
+
+      .map-modal-body {
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #090d16;
+        overflow: auto;
+        min-height: 360px;
+      }
+
+      .map-modal-img {
+        max-width: 100%;
+        max-height: 80vh;
+        object-fit: contain;
+        display: block;
+      }
+
+      /* =========================================
+         Mobile-First Optimized Styles & Text Condensation
+         ========================================= */
+      .desktop-only-desc {
+        display: block;
+      }
+
+      .city-mobile-summary {
+        display: none;
+      }
+
+      .hero-mobile-highlights {
+        display: none;
+      }
+
+      .accordion-summary-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--accent-light);
+        color: var(--accent);
+        border: 1px solid var(--accent-border);
+        padding: 5px 12px;
+        border-radius: 9999px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+        line-height: 1.4;
+      }
+
+      @media (max-width: 640px) {
+        .container {
+          padding: 0 16px;
+        }
+
+        /* Mobile Typography & Spacing */
+        section {
+          padding: 44px 0 !important;
+        }
+
+        .section-header {
+          margin-bottom: 24px;
+        }
+
+        .section-title {
+          font-size: 1.45rem;
+          line-height: 1.25;
+        }
+
+        .section-subtitle {
+          font-size: 0.88rem;
+          line-height: 1.5;
+        }
+
+        /* Hero on phone: титульная страница на весь экран */
+        #hero {
+          min-height: calc(100vh - 64px) !important;
+          min-height: calc(100dvh - 64px) !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: center !important;
+          padding: 32px 0 36px !important;
+          box-sizing: border-box !important;
+        }
+
+        .hero-badge-wrap {
+          display: none !important;
+        }
+
+        .hero-title {
+          font-size: 1.5rem;
+          line-height: 1.25;
+          margin-bottom: 14px;
+        }
+
+        .hero-subtitle {
+          font-size: 0.94rem;
+          line-height: 1.48;
+          margin-bottom: 24px;
+        }
+
+        .hero-actions {
+          width: 100%;
+          max-width: 320px;
+          margin: 0 auto;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .hero-actions .btn {
+          width: 100%;
+          justify-content: center;
+          padding: 13px 18px;
+          font-size: 0.94rem;
+        }
+
+        /* Hide long descriptive historical essays on mobile */
+        .desktop-only-desc {
+          display: none !important;
+        }
+
+        /* Crisp 4-bullet mobile summary */
+        .city-mobile-summary {
+          display: block;
+          background: #fffcf9;
+          border: 1px solid rgba(238, 83, 13, 0.22);
+          border-radius: var(--radius-md);
+          padding: 12px 14px;
+          margin-top: 12px;
+          margin-bottom: 16px;
+        }
+
+        .city-mobile-summary-header {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          font-size: 0.78rem;
+          font-weight: 800;
+          color: var(--accent);
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          margin-bottom: 8px;
+        }
+
+        .city-mobile-points-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 7px;
+        }
+
+        .city-mobile-point-item {
+          font-size: 0.84rem;
+          color: var(--text-primary);
+          line-height: 1.4;
+        }
+
+        /* Horizontal Swipe for City Tabs */
+        .city-tabs-nav {
+          display: flex;
+          justify-content: flex-start;
+          gap: 8px;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          padding: 4px 16px 12px;
+          margin: 0 -16px 16px;
+          scrollbar-width: none;
+        }
+
+        .city-tabs-nav::-webkit-scrollbar {
+          display: none;
+        }
+
+        .city-tab-btn {
+          flex-shrink: 0;
+          padding: 7px 13px;
+          font-size: 0.82rem;
+          gap: 6px;
+        }
+
+        .city-tab-badge {
+          font-size: 0.68rem;
+          padding: 2px 6px;
+        }
+
+        /* City Card on phone */
+        .city-card {
+          padding: 16px 12px;
+          border-radius: var(--radius-lg);
+        }
+
+        .city-title-group h3 {
+          font-size: 1.4rem;
+        }
+
+        .city-archetype-tag {
+          font-size: 0.75rem;
+          padding: 3px 9px;
+        }
+
+        /* 3-metric compact micro-bar on mobile */
+        .city-stats-grid {
+          grid-template-columns: repeat(3, 1fr) !important;
+          gap: 6px !important;
+          margin-bottom: 16px !important;
+        }
+
+        .city-stat-box {
+          padding: 8px 4px !important;
+          text-align: center;
+          align-items: center;
+          border-radius: 8px;
+          gap: 2px;
+        }
+
+        .city-stat-label {
+          font-size: 0.65rem !important;
+          line-height: 1.15;
+          margin-bottom: 2px;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .city-stat-value {
+          font-size: 1.08rem !important;
+          letter-spacing: -0.02em;
+          line-height: 1.1;
+        }
+
+        .city-stat-sub {
+          font-size: 0.66rem !important;
+          color: var(--text-muted);
+        }
+
+        /* Map stage on phone */
+        .gee-map-stage {
+          min-height: 220px;
+          max-height: 300px;
+        }
+
+        .gee-snapshot-overlay {
+          bottom: 8px;
+          left: 8px;
+          right: 8px;
+          padding: 8px 10px;
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+        }
+
+        .gee-overlay-heading {
+          font-size: 0.8rem;
+          margin-bottom: 4px;
+          padding-bottom: 4px;
+        }
+
+        .gee-overlay-item {
+          font-size: 0.74rem;
+          margin-bottom: 2px;
+        }
+
+        .gee-zoom-btn {
+          top: 10px;
+          right: 10px;
+          padding: 5px 10px;
+          font-size: 0.72rem;
+        }
+
+        .gee-legend {
+          padding: 8px 10px;
+          gap: 6px;
+        }
+
+        .legend-item {
+          font-size: 0.72rem;
+        }
+
+        /* Assistant Widget */
+        .hero-assistant-box {
+          border-radius: var(--radius-lg);
+        }
+
+        .assistant-bar {
+          padding: 10px 14px;
+        }
+
+        .assistant-feed {
+          padding: 14px 12px;
+          min-height: 120px;
+          max-height: 240px;
+        }
+
+        .feed-bubble {
+          font-size: 0.86rem;
+          padding: 10px 14px;
+          max-width: 94%;
+        }
+
+        .assistant-chips-wrap {
+          padding: 8px 12px;
+          gap: 6px;
+          scrollbar-width: none;
+        }
+        .assistant-chips-wrap::-webkit-scrollbar {
+          display: none;
+        }
+
+        .query-chip {
+          padding: 6px 11px;
+          font-size: 0.74rem;
+        }
+
+        .assistant-input-row {
+          padding: 10px 12px;
+          gap: 8px;
+        }
+
+        .assistant-input-field {
+          font-size: 16px !important; /* Prevents auto-zoom in iOS Safari */
+          padding: 9px 14px;
+        }
+
+        .assistant-input-row .btn {
+          padding: 9px 14px;
+          font-size: 0.82rem;
+        }
+
+        /* Comparison Section on Phone */
+        .comparison-col-header {
+          font-size: 1.15rem;
+          margin-bottom: 16px;
+        }
+
+        .comp-list {
+          gap: 14px;
+        }
+
+        .comp-card {
+          gap: 10px;
+        }
+
+        .comp-content-title {
+          font-size: 0.88rem;
+        }
+
+        .comp-content-desc {
+          font-size: 0.8rem;
+          line-height: 1.45;
+        }
+
+        /* Accordion Methodology */
+        .accordion-header {
+          padding: 12px 14px;
+        }
+
+        .accordion-name {
+          font-size: 0.88rem;
+        }
+
+        .accordion-num {
+          font-size: 0.82rem;
+        }
+
+        .accordion-body {
+          padding: 0 14px 14px;
+          font-size: 0.84rem;
+          line-height: 1.5;
+        }
+
+        /* Lightbox modal on mobile */
+        .map-modal {
+          padding: 8px;
+        }
+
+        .map-modal-dialog {
+          max-height: 94vh;
+          border-radius: 12px;
+        }
+
+        .map-modal-header {
+          padding: 10px 14px;
+        }
+
+        .map-modal-title {
+          font-size: 0.84rem;
+        }
+
+        .map-modal-close {
+          width: 36px;
+          height: 36px;
+        }
+
+        /* Minimalist compact footer on mobile */
+        #site-footer {
+          padding: 24px 0 20px !important;
+        }
+
+        .footer-grid {
+          margin-bottom: 20px !important;
+          gap: 20px !important;
+        }
+
+        .footer-brand {
+          max-width: 100%;
+        }
+
+        .footer-logo {
+          font-size: 0.96rem;
+          margin-bottom: 6px;
+        }
+
+        .footer-desc {
+          font-size: 0.8rem;
+          line-height: 1.45;
+          color: var(--text-secondary);
+        }
+
+        .footer-links-group {
+          display: none; /* Hide dense link columns on small screens for a clean minimalist footer */
+        }
+
+        .footer-bottom {
+          padding-top: 14px;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+          font-size: 0.74rem;
+        }
+
+        .footer-badges {
+          gap: 6px;
+        }
+
+        .footer-pill {
+          font-size: 0.7rem;
+          padding: 2px 8px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .nav-brand-text {
+          font-size: 0.82rem;
+          letter-spacing: -0.01em;
+        }
+        .navbar-actions {
+          gap: 6px;
+        }
+        .lang-switch-btn {
+          padding: 2px 3px 2px 7px;
+        }
+        .lang-globe-icon {
+          width: 13px;
+          height: 13px;
+        }
+        .lang-pill-item {
+          font-size: 0.65rem;
+          padding: 2px 5px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 1. Header / Navbar -->
+    <header class="navbar" id="top-navbar">
+      <div class="container navbar-content">
+        <!-- Лаконичный логотип проекта -->
+        <a href="#hero" class="nav-brand-clean" id="nav-brand-logo" aria-label="Спутниковый мониторинг">
+          <span class="nav-brand-dot"></span>
+          <span class="nav-brand-text i18n-node" data-i18n="nav_brand">Спутниковый мониторинг</span>
+        </a>
+
+        <nav class="nav-links" id="main-nav">
+          <a href="#assistant" id="nav-link-assistant" class="i18n-node" data-i18n="nav_assistant">Гео-ассистент</a>
+          <a href="#cities" id="nav-link-cities" class="i18n-node" data-i18n="nav_cities">Города</a>
+          <a href="#methodology" id="nav-link-methodology" class="i18n-node" data-i18n="nav_methodology">Методология</a>
+        </nav>
+
+        <div class="navbar-actions">
+          <!-- Аккуратная анимированная плашка переключения языка -->
+          <div class="lang-switch-wrap" id="lang-switch-desktop-wrap">
+            <button class="lang-switch-btn" id="lang-toggle-btn" type="button" aria-label="Сменить язык / Switch language" title="Переключить язык (RU / EN)">
+              <svg class="lang-globe-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              <div class="lang-pills-box" id="lang-pills-container">
+                <span class="lang-pill-item" data-lang="ru">RU</span>
+                <span class="lang-pill-item" data-lang="en">EN</span>
+                <span class="lang-pill-slider" id="lang-slider-indicator"></span>
+              </div>
+            </button>
+          </div>
+
+
+          <button class="mobile-toggle" id="mobile-toggle-btn" aria-label="Открыть меню">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile dropdown -->
+      <div class="mobile-menu" id="mobile-menu-dropdown">
+        <a href="#assistant" class="mobile-nav-link i18n-node" data-i18n="nav_assistant">Гео-ассистент</a>
+        <a href="#cities" class="mobile-nav-link i18n-node" data-i18n="nav_cities">Города</a>
+        <a href="#methodology" class="mobile-nav-link i18n-node" data-i18n="nav_methodology">Методология</a>
+      </div>
+    </header>
+
+    <main>
+      <!-- 2. Главный экран (Hero Section) -->
+      <section id="hero">
+        <div class="container">
+          <div class="hero-badge-wrap">
+            <div class="badge-orange" id="hero-fest-badge">
+              <span class="badge-orange-dot"></span>
+              <span class="i18n-node" data-i18n="hero_badge">Спутниковый мониторинг Sentinel-2 • 10 лет наблюдений (2016–2026)</span>
+            </div>
+          </div>
+
+          <h1 class="hero-title i18n-node" id="hero-main-title" data-i18n="hero_title">
+            Применение спутниковых съёмок для многолетнего мониторинга природных процессов
+          </h1>
+
+          <p class="hero-subtitle i18n-node" id="hero-description" data-i18n="hero_desc">
+            Спутниковый мониторинг природных процессов мегаполисов
+          </p>
+
+          <div class="hero-actions">
+            <a href="#cities" class="btn btn-accent i18n-node" id="hero-btn-cities" data-i18n="hero_btn_cities">
+              Данные 5 городов →
+            </a>
+            <a href="#assistant" class="btn btn-secondary i18n-node" id="hero-btn-assistant" data-i18n="hero_btn_assistant">
+              Спутниковый гео-ассистент ↓
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Бегущая строка (Marquee Ticker Ribbon) -->
+      <div class="marquee-ribbon" aria-hidden="true">
+        <div class="marquee-track">
+          <div class="marquee-phrase">
+            <span>SENTINEL-2 L2A</span> <span class="marquee-sep">//</span>
+            <span>GOOGLE EARTH ENGINE</span> <span class="marquee-sep">//</span>
+            <span>СПЕКТРАЛЬНЫЙ АНАЛИЗ</span> <span class="marquee-sep">//</span>
+            <span>NDVI И NDBI</span> <span class="marquee-sep">//</span>
+            <span>РАЗРЕШЕНИЕ 10 МЕТРОВ</span> <span class="marquee-sep">//</span>
+            <span>2016–2026</span> <span class="marquee-sep">//</span>
+            <span>ДВИЖЕНИЕ ПЕРВЫХ</span> <span class="marquee-sep">//</span>
+            <span>5 АГЛОМЕРАЦИЙ РОССИИ</span> <span class="marquee-sep">//</span>
+            <span>REDUCEREGION</span> <span class="marquee-sep">//</span>
+            <span>ЭКОЛОГИЧЕСКИЙ КАРКАС</span> <span class="marquee-sep">//</span>
+            <span>ОТКРЫТЫЕ СПУТНИКОВЫЕ ДАННЫЕ</span> <span class="marquee-sep">//</span>
+          </div>
+          <div class="marquee-phrase">
+            <span>SENTINEL-2 L2A</span> <span class="marquee-sep">//</span>
+            <span>GOOGLE EARTH ENGINE</span> <span class="marquee-sep">//</span>
+            <span>СПЕКТРАЛЬНЫЙ АНАЛИЗ</span> <span class="marquee-sep">//</span>
+            <span>NDVI И NDBI</span> <span class="marquee-sep">//</span>
+            <span>РАЗРЕШЕНИЕ 10 МЕТРОВ</span> <span class="marquee-sep">//</span>
+            <span>2016–2026</span> <span class="marquee-sep">//</span>
+            <span>ДВИЖЕНИЕ ПЕРВЫХ</span> <span class="marquee-sep">//</span>
+            <span>5 АГЛОМЕРАЦИЙ РОССИИ</span> <span class="marquee-sep">//</span>
+            <span>REDUCEREGION</span> <span class="marquee-sep">//</span>
+            <span>ЭКОЛОГИЧЕСКИЙ КАРКАС</span> <span class="marquee-sep">//</span>
+            <span>ОТКРЫТЫЕ СПУТНИКОВЫЕ ДАННЫЕ</span> <span class="marquee-sep">//</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Интерактивный спутниковый ассистент исследователя (Dedicated Section) -->
+      <section id="assistant" class="assistant-section">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-eyebrow i18n-node" data-i18n="assistant_eyebrow">Интерактивный анализ</span>
+            <h2 class="section-title i18n-node" data-i18n="assistant_title">Спутниковый гео-ассистент</h2>
+            <p class="section-subtitle i18n-node" data-i18n="assistant_subtitle">
+              Задайте исследовательский вопрос о динамике эко-каркаса, индексах NDVI/NDBI и результатах спутникового мониторинга 5 мегаполисов.
+            </p>
+          </div>
+
+          <div class="hero-assistant-box" id="assistant-widget">
+            <div class="assistant-bar">
+              <div class="assistant-status">
+                <span class="badge-orange-dot"></span>
+                <span class="i18n-node" data-i18n="assistant_bot_name">Спутниковый гео-ассистент</span>
+              </div>
+              <span class="status-pill i18n-node" data-i18n="assistant_status">Sentinel-2 L2A • онлайн</span>
+            </div>
+
+            <div class="assistant-feed" id="assistant-chat-feed">
+              <div class="feed-bubble feed-bot i18n-node" data-i18n="assistant_greeting">
+                Привет! Я спутниковый гео-ассистент проекта. Выберите один из готовых исследовательских вопросов или напишите свой, чтобы мгновенно получить пространственные расчеты по городам за 2016–2026 гг.
+              </div>
+            </div>
+
+            <div class="assistant-chips-wrap" id="assistant-prompt-chips">
+              <button class="query-chip i18n-node" data-q="loss" data-i18n="q_loss">Какой город потерял больше всего лесов?</button>
+              <button class="query-chip i18n-node" data-q="ndvi" data-i18n="q_ndvi">Что такое индексы NDVI и NDBI?</button>
+              <button class="query-chip i18n-node" data-q="ekb" data-i18n="q_ekb">Что показал Екатеринбург за 10 лет?</button>
+              <button class="query-chip i18n-node" data-q="msk" data-i18n="q_msk">Каковы итоги мониторинга Москвы?</button>
+              <button class="query-chip i18n-node" data-q="clouds" data-i18n="q_clouds">Как отсекаются облака в Sentinel-2?</button>
+              <button class="query-chip i18n-node" data-q="gee" data-i18n="q_gee">В чем преимущество Google Earth Engine?</button>
+            </div>
+
+            <form class="assistant-input-row" id="assistant-form" onsubmit="return false;">
+              <input
+                type="text"
+                id="assistant-user-input"
+                class="assistant-input-field i18n-node"
+                data-i18n-ph="assistant_placeholder"
+                placeholder="Задайте вопрос о спутниковых данных (например: Казань или NDVI)..."
+                autocomplete="off"
+              />
+              <button type="submit" class="btn btn-accent btn-sm i18n-node" id="assistant-submit-btn" data-i18n="assistant_send">
+                Отправить →
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Основной блок «Топ-5 городов: Исследования и данные» -->
+      <section id="cities">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-eyebrow i18n-node" data-i18n="cities_eyebrow">База данных мониторинга</span>
+            <h2 class="section-title i18n-node" data-i18n="cities_title">Топ-5 городов: Исследования и данные</h2>
+            <p class="section-subtitle i18n-node" data-i18n="cities_subtitle">
+              Выберите город, чтобы просмотреть архетип, динамику растительного покрова, объем новой застройки и спутниковые карты изменений из Google Earth Engine.
+            </p>
+          </div>
+
+          <!-- Вкладки (табы) для 5 городов -->
+          <div class="city-tabs-nav" id="city-tabs" role="tablist">
+            <button class="city-tab-btn active" data-city="ekb" role="tab" aria-selected="true" id="tab-btn-ekb">
+              <span class="i18n-node" data-i18n="tab_ekb">01 Екатеринбург</span>
+              <span class="city-tab-badge i18n-node" data-i18n="badge_ural">Урал</span>
+            </button>
+            <button class="city-tab-btn" data-city="spb" role="tab" aria-selected="false" id="tab-btn-spb">
+              <span class="i18n-node" data-i18n="tab_spb">02 Санкт-Петербург</span>
+              <span class="city-tab-badge i18n-node" data-i18n="badge_nw">Северо-Запад</span>
+            </button>
+            <button class="city-tab-btn" data-city="msk" role="tab" aria-selected="false" id="tab-btn-msk">
+              <span class="i18n-node" data-i18n="tab_msk">03 Москва</span>
+              <span class="city-tab-badge i18n-node" data-i18n="badge_center">Центр</span>
+            </button>
+            <button class="city-tab-btn" data-city="kzn" role="tab" aria-selected="false" id="tab-btn-kzn">
+              <span class="i18n-node" data-i18n="tab_kzn">04 Казань</span>
+              <span class="city-tab-badge i18n-node" data-i18n="badge_volga">Поволжье</span>
+            </button>
+            <button class="city-tab-btn" data-city="nsk" role="tab" aria-selected="false" id="tab-btn-nsk">
+              <span class="i18n-node" data-i18n="tab_nsk">05 Новосибирск</span>
+              <span class="city-tab-badge i18n-node" data-i18n="badge_siberia">Сибирь</span>
+            </button>
+          </div>
+
+          <!-- CITY 1: Екатеринбург -->
+          <div class="city-panel active" id="city-panel-ekb" role="tabpanel">
+            <div class="city-card">
+              <div class="city-header-row">
+                <div class="city-title-group">
+                  <h3 class="i18n-node" data-i18n="city_ekb_name">Екатеринбург</h3>
+                  <span class="city-archetype-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h10"/><path d="M7 12h10"/><path d="M7 17h10"/></svg>
+                    <span class="i18n-node" data-i18n="city_ekb_archetype">Город-завод / Индустриальное сердце</span>
+                  </span>
+                  <p class="city-intro-desc desktop-only-desc i18n-node" data-i18n="city_ekb_desc">
+                    Исторически сформированный вокруг заводских плотин и промышленных гигантов, Екатеринбург за 10 лет активно редевелопит промзоны вдоль реки Исеть. При этом стремительное расширение южных и юго-западных районов (Академический, Солнечный) усилило антропогенную нагрузку на лесопарковый зеленый пояс.
+                  </p>
+                  <!-- Компактная мобильная сводка -->
+                  <div class="city-mobile-summary">
+                    <div class="city-mobile-summary-header">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      <span class="i18n-node" data-i18n="city_mobile_summary_title">Ключевые факты исследования:</span>
+                    </div>
+                    <ul class="city-mobile-points-list">
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_ekb_m1">📉 <strong>Убыль:</strong> 6 808 га (юго-западный лесопарк)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_ekb_m2">🌿 <strong>Прирост:</strong> 10 287 га (компенсации и поросль)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_ekb_m3">🏗️ <strong>Застройка:</strong> 3 095 га (Академический, Солнечный)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_ekb_m4">⚡ <strong>Итог:</strong> Баланс +3 479 га, но растет нагрузка на зеленый пояс</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3 мини-статистики из исследования пользователя -->
+              <div class="city-stats-grid">
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_veg_loss">Убыль растительности</span>
+                  <span class="city-stat-value stat-loss">6 808 га</span>
+                  <span class="city-stat-sub">68.1 км²</span>
+                </div>
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_veg_gain">Прирост растительности</span>
+                  <span class="city-stat-value stat-growth" style="color: #16a34a;">10 287 га</span>
+                  <span class="city-stat-sub">102.9 км²</span>
+                </div>
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_built_growth">Прирост застройки</span>
+                  <span class="city-stat-value stat-balance" style="color: #ea580c;">3 095 га</span>
+                  <span class="city-stat-sub">31.0 км²</span>
+                </div>
+              </div>
+
+              <!-- Карточка со спутниковыми исследованиями из Google Earth Engine -->
+              <div class="gee-research-card">
+                <div class="gee-research-card-header">
+                  <div class="gee-research-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                      <path d="M2 12h20"></path>
+                    </svg>
+                    <span class="i18n-node" data-i18n="city_ekb_research_title">Екатеринбург: Анализ изменений за 10 лет</span>
+                  </div>
+                  <div class="gee-research-badges">
+                    <span class="gee-pill-tag highlight">Sentinel-2 L2A</span>
+                    <span class="gee-pill-tag">Google Earth Engine</span>
+                    <span class="gee-pill-tag i18n-node" data-i18n="tag_resolution">10 м/пикс</span>
+                  </div>
+                </div>
+
+                <div class="gee-map-stage" onclick="openMapModal('/Екатеринбург.png', 'Екатеринбург: Анализ изменений за 10 лет')">
+                  <img src="/Екатеринбург.png" alt="Екатеринбург: Анализ изменений за 10 лет" class="gee-map-img" loading="lazy" onerror="if(!this.dataset.tried1){this.dataset.tried1='1';this.src='/images/Екатеринбург.png';}else if(!this.dataset.tried2){this.dataset.tried2='1';this.src='/ekaterinburg.png';}" />
+                  <button type="button" class="gee-zoom-btn" aria-label="Увеличить карту">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                    <span class="i18n-node" data-i18n="zoom_map_btn">Увеличить снимок</span>
+                  </button>
+
+                  <div class="gee-snapshot-overlay">
+                    <div class="gee-overlay-heading i18n-node" data-i18n="city_ekb_research_title">Екатеринбург: Анализ изменений за 10 лет</div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#dc2626; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_veg_loss">Убыль растительности:</span>
+                      <strong>6808 га (68.1 км²)</strong>
+                    </div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#16a34a; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_veg_gain">Прирост растительности:</span>
+                      <strong>10287 га (102.9 км²)</strong>
+                    </div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#ea580c; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_built_growth">Прирост застройки:</span>
+                      <strong>3095 га (31.0 км²)</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Легенда цветов -->
+              <div class="gee-legend">
+                <div class="legend-item"><span class="legend-dot dot-red"></span><span class="i18n-node" data-i18n="legend_red">Красный: Убыль растительности / вырубка (ΔNDVI &lt; -0.2)</span></div>
+                <div class="legend-item"><span class="legend-dot dot-orange"></span><span class="i18n-node" data-i18n="legend_orange">Оранжевый: Прирост застройки / бетон (ΔNDBI &gt; +0.15)</span></div>
+                <div class="legend-item"><span class="legend-dot dot-green"></span><span class="i18n-node" data-i18n="legend_green">Зеленый: Прирост растительности / озеленение (ΔNDVI &gt; +0.2)</span></div>
+              </div>
+
+              <!-- Короткий вывод -->
+              <div class="city-takeaway-box">
+                <div class="takeaway-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  </svg>
+                </div>
+                <div class="takeaway-text">
+                  <h5 class="i18n-node" data-i18n="trend_title">Главный тренд трансформации (2016–2026):</h5>
+                  <p class="i18n-node" data-i18n="city_ekb_trend">
+                    Баланс биомассы положителен (+3 479 га): нарастание естественной поросли и компенсационные посадки опережают вырубку, при этом застройка (+3 095 га) активно поглощает южный и юго-западный лесопарковый пояс.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CITY 2: Санкт-Петербург -->
+          <div class="city-panel" id="city-panel-spb" role="tabpanel">
+            <div class="city-card">
+              <div class="city-header-row">
+                <div class="city-title-group">
+                  <h3 class="i18n-node" data-i18n="city_spb_name">Санкт-Петербург</h3>
+                  <span class="city-archetype-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16"/><path d="M2 18h20"/><path d="M12 2 2 7l10 5 10-5-10-5Z"/></svg>
+                    <span class="i18n-node" data-i18n="city_spb_archetype">Город-культура / Северо-западный хранитель</span>
+                  </span>
+                  <p class="city-intro-desc desktop-only-desc i18n-node" data-i18n="city_spb_desc">
+                    Бережно сохраняя исторический каменный центр под эгидой ЮНЕСКО, Санкт-Петербург направил всю урбанизационную энергию на окраины: приграничные Мурино, Кудрово, Шушары и намывные территории Васильевского острова. Близость Финского залива и болотных заказников обостряет вопрос сохранения природных буферов.
+                  </p>
+                  <!-- Компактная мобильная сводка -->
+                  <div class="city-mobile-summary">
+                    <div class="city-mobile-summary-header">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      <span class="i18n-node" data-i18n="city_mobile_summary_title">Ключевые факты исследования:</span>
+                    </div>
+                    <ul class="city-mobile-points-list">
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_spb_m1">📉 <strong>Убыль леса:</strong> 16 181 га (Мурино, Кудрово, КАД)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_spb_m2">🌿 <strong>Прирост:</strong> 3 851 га (ограничен плотной застройкой)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_spb_m3">🏗️ <strong>Застройка и намывы:</strong> 11 748 га (Васильевский о-в, Шушары)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_spb_m4">⚡ <strong>Итог:</strong> Дефицит биомассы (-12 330 га) из-за субурбанизации</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3 мини-статистики из исследования пользователя -->
+              <div class="city-stats-grid">
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_spb_loss">Убыль леса</span>
+                  <span class="city-stat-value stat-loss">16 181 га</span>
+                  <span class="city-stat-sub">161.8 км²</span>
+                </div>
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_spb_gain">Прирост зелени</span>
+                  <span class="city-stat-value stat-growth" style="color: #16a34a;">3 851 га</span>
+                  <span class="city-stat-sub">38.5 км²</span>
+                </div>
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_spb_built">Новая застройка и намывы</span>
+                  <span class="city-stat-value stat-balance" style="color: #ea580c;">11 748 га</span>
+                  <span class="city-stat-sub">117.5 км²</span>
+                </div>
+              </div>
+
+              <!-- Карточка со спутниковыми исследованиями из Google Earth Engine -->
+              <div class="gee-research-card">
+                <div class="gee-research-card-header">
+                  <div class="gee-research-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                      <path d="M2 12h20"></path>
+                    </svg>
+                    <span class="i18n-node" data-i18n="city_spb_research_title">Санкт-Петербург: Баланс за 10 лет</span>
+                  </div>
+                  <div class="gee-research-badges">
+                    <span class="gee-pill-tag highlight">Sentinel-2 L2A</span>
+                    <span class="gee-pill-tag">Google Earth Engine</span>
+                    <span class="gee-pill-tag i18n-node" data-i18n="tag_resolution">10 м/пикс</span>
+                  </div>
+                </div>
+
+                <div class="gee-map-stage" onclick="openMapModal('/Санкт-петербург.png', 'Санкт-Петербург: Баланс за 10 лет')">
+                  <img src="/Санкт-петербург.png" alt="Санкт-Петербург: Баланс за 10 лет" class="gee-map-img" loading="lazy" onerror="if(!this.dataset.tried1){this.dataset.tried1='1';this.src='/images/Санкт-петербург.png';}else if(!this.dataset.tried2){this.dataset.tried2='1';this.src='/spb.png';}" />
+                  <button type="button" class="gee-zoom-btn" aria-label="Увеличить карту">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                    <span class="i18n-node" data-i18n="zoom_map_btn">Увеличить снимок</span>
+                  </button>
+
+                  <div class="gee-snapshot-overlay">
+                    <div class="gee-overlay-heading i18n-node" data-i18n="city_spb_research_title">Санкт-Петербург: Баланс за 10 лет</div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#dc2626; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_spb_loss">Убыль леса:</span>
+                      <strong>16 181 га (161.8 км²)</strong>
+                    </div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#16a34a; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_spb_gain">Прирост зелени:</span>
+                      <strong>3 851 га (38.5 км²)</strong>
+                    </div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#ea580c; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_spb_built">Новая застройка и намывы:</span>
+                      <strong>11 748 га (117.5 км²)</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Легенда -->
+              <div class="gee-legend">
+                <div class="legend-item"><span class="legend-dot dot-red"></span><span class="i18n-node" data-i18n="legend_spb_red">Красный: Убыль леса и пригородных перелесков (ΔNDVI &lt; -0.2)</span></div>
+                <div class="legend-item"><span class="legend-dot dot-orange"></span><span class="i18n-node" data-i18n="legend_spb_orange">Оранжевый: Застройка и намывные территории (ΔNDBI &gt; +0.15)</span></div>
+                <div class="legend-item"><span class="legend-dot dot-green"></span><span class="i18n-node" data-i18n="legend_spb_green">Зеленый: Прирост зелени и парков (ΔNDVI &gt; +0.2)</span></div>
+              </div>
+
+              <!-- Вывод -->
+              <div class="city-takeaway-box">
+                <div class="takeaway-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="takeaway-text">
+                  <h5 class="i18n-node" data-i18n="trend_title">Главный тренд трансформации (2016–2026):</h5>
+                  <p class="i18n-node" data-i18n="city_spb_trend">
+                    Масштабная убыль лесного пояса (16 181 га) на фоне плотной субурбанизации вдоль КАД и создания намывов (11 748 га) при ограниченном приросте зелени (3 851 га).
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CITY 3: Москва -->
+          <div class="city-panel" id="city-panel-msk" role="tabpanel">
+            <div class="city-card">
+              <div class="city-header-row">
+                <div class="city-title-group">
+                  <h3 class="i18n-node" data-i18n="city_msk_name">Москва</h3>
+                  <span class="city-archetype-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>
+                    <span class="i18n-node" data-i18n="city_msk_archetype">Город-гигант / Динамичный центр</span>
+                  </span>
+                  <p class="city-intro-desc desktop-only-desc i18n-node" data-i18n="city_msk_desc">
+                    Крупнейшая агломерация страны переживает масштабную экспансию в юго-западном векторе (ТиНАО), куда сместились основные объемы нового девелопмента. Внутри МКАД ключевым драйвером выступают реновация, переосмысление бывших промзон («ЗИЛ», «Серп и Молот») и масштабное благоустройство парковых зон.
+                  </p>
+                  <!-- Компактная мобильная сводка -->
+                  <div class="city-mobile-summary">
+                    <div class="city-mobile-summary-header">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      <span class="i18n-node" data-i18n="city_mobile_summary_title">Ключевые факты исследования:</span>
+                    </div>
+                    <ul class="city-mobile-points-list">
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_msk_m1">📉 <strong>Убыль:</strong> 35 942 га (максимум среди 5 городов, вектор ТиНАО)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_msk_m2">🌿 <strong>Прирост:</strong> 13 017 га (благоустройство и озеленение)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_msk_m3">🏗️ <strong>Застройка:</strong> 22 516 га (новые жилые и дорожные кластеры)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_msk_m4">⚡ <strong>Итог:</strong> Рекордная антропогенная нагрузка за 10 лет</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3 мини-статистики из исследования пользователя -->
+              <div class="city-stats-grid">
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_veg_loss">Убыль растительности</span>
+                  <span class="city-stat-value stat-loss">35 942 га</span>
+                  <span class="city-stat-sub">359.4 км²</span>
+                </div>
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_veg_gain">Прирост растительности</span>
+                  <span class="city-stat-value stat-growth" style="color: #16a34a;">13 017 га</span>
+                  <span class="city-stat-sub">130.2 км²</span>
+                </div>
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_built_growth">Прирост застройки</span>
+                  <span class="city-stat-value stat-balance" style="color: #ea580c;">22 516 га</span>
+                  <span class="city-stat-sub">225.2 км²</span>
+                </div>
+              </div>
+
+              <!-- Карточка со спутниковыми исследованиями из Google Earth Engine -->
+              <div class="gee-research-card">
+                <div class="gee-research-card-header">
+                  <div class="gee-research-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                      <path d="M2 12h20"></path>
+                    </svg>
+                    <span class="i18n-node" data-i18n="city_msk_research_title">Москва: Анализ изменений за 10 лет</span>
+                  </div>
+                  <div class="gee-research-badges">
+                    <span class="gee-pill-tag highlight">Sentinel-2 L2A</span>
+                    <span class="gee-pill-tag">Google Earth Engine</span>
+                    <span class="gee-pill-tag i18n-node" data-i18n="tag_resolution">10 м/пикс</span>
+                  </div>
+                </div>
+
+                <div class="gee-map-stage" onclick="openMapModal('/Москва.png', 'Москва: Анализ изменений за 10 лет')">
+                  <img src="/Москва.png" alt="Москва: Анализ изменений за 10 лет" class="gee-map-img" loading="lazy" onerror="if(!this.dataset.tried1){this.dataset.tried1='1';this.src='/images/Москва.png';}else if(!this.dataset.tried2){this.dataset.tried2='1';this.src='/moscow.png';}" />
+                  <button type="button" class="gee-zoom-btn" aria-label="Увеличить карту">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                    <span class="i18n-node" data-i18n="zoom_map_btn">Увеличить снимок</span>
+                  </button>
+
+                  <div class="gee-snapshot-overlay">
+                    <div class="gee-overlay-heading i18n-node" data-i18n="city_msk_research_title">Москва: Анализ изменений за 10 лет</div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#dc2626; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_veg_loss">Убыль растительности:</span>
+                      <strong>35942 га (359.4 км²)</strong>
+                    </div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#16a34a; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_veg_gain">Прирост растительности:</span>
+                      <strong>13017 га (130.2 км²)</strong>
+                    </div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#ea580c; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_built_growth">Прирост застройки:</span>
+                      <strong>22516 га (225.2 км²)</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Легенда цветов -->
+              <div class="gee-legend">
+                <div class="legend-item"><span class="legend-dot dot-red"></span><span class="i18n-node" data-i18n="legend_red">Красный: Убыль растительности / вырубка (ΔNDVI &lt; -0.2)</span></div>
+                <div class="legend-item"><span class="legend-dot dot-orange"></span><span class="i18n-node" data-i18n="legend_orange">Оранжевый: Прирост застройки / бетон (ΔNDBI &gt; +0.15)</span></div>
+                <div class="legend-item"><span class="legend-dot dot-green"></span><span class="i18n-node" data-i18n="legend_green">Зеленый: Прирост растительности / озеленение (ΔNDVI &gt; +0.2)</span></div>
+              </div>
+
+              <!-- Вывод -->
+              <div class="city-takeaway-box">
+                <div class="takeaway-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="takeaway-text">
+                  <h5 class="i18n-node" data-i18n="trend_title">Главный тренд трансформации (2016–2026):</h5>
+                  <p class="i18n-node" data-i18n="city_msk_trend">
+                    Масштабнейший объем антропогенной экспансии (22 516 га новой застройки) и убыль 35 942 га растительности, преимущественно в южном и юго-западном векторах ТиНАО.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CITY 4: Казань -->
+          <div class="city-panel" id="city-panel-kzn" role="tabpanel">
+            <div class="city-card">
+              <div class="city-header-row">
+                <div class="city-title-group">
+                  <h3 class="i18n-node" data-i18n="city_kzn_name">Казань</h3>
+                  <span class="city-archetype-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/><circle cx="12" cy="12" r="3"/></svg>
+                    <span class="i18n-node" data-i18n="city_kzn_archetype">Город-инноватор / Мост традиций и будущего</span>
+                  </span>
+                  <p class="city-intro-desc desktop-only-desc i18n-node" data-i18n="city_kzn_desc">
+                    Столица Татарстана выделяется одной из самых взвешенных стратегий развития водно-зеленого каркаса в стране. Проект масштабного эко-развития реки Казанки, ревитализация берегов озер Кабан и развитие инновационного спутника Иннополис позволили минимизировать негативные последствия строительного бума.
+                  </p>
+                  <!-- Компактная мобильная сводка -->
+                  <div class="city-mobile-summary">
+                    <div class="city-mobile-summary-header">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      <span class="i18n-node" data-i18n="city_mobile_summary_title">Ключевые факты исследования:</span>
+                    </div>
+                    <ul class="city-mobile-points-list">
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_kzn_m1">📉 <strong>Убыль леса:</strong> 3 659 га (минимальная среди 5 мегаполисов)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_kzn_m2">🌿 <strong>Прирост зелени:</strong> 6 616 га (набережные Казанки и экопарки)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_kzn_m3">🏗️ <strong>Новая застройка:</strong> 1 492 га (сдержанный эко-ориентированный темп)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_kzn_m4">⚡ <strong>Итог:</strong> Лучший экологический баланс (+2 957 га)</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3 мини-статистики из исследования пользователя -->
+              <div class="city-stats-grid">
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_spb_loss">Убыль леса</span>
+                  <span class="city-stat-value stat-loss">3 659 га</span>
+                  <span class="city-stat-sub">36.6 км²</span>
+                </div>
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_spb_gain">Прирост зелени</span>
+                  <span class="city-stat-value stat-growth" style="color: #16a34a;">6 616 га</span>
+                  <span class="city-stat-sub">66.2 км²</span>
+                </div>
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_kzn_built">Новая застройка</span>
+                  <span class="city-stat-value stat-balance" style="color: #ea580c;">1 492 га</span>
+                  <span class="city-stat-sub">14.9 км²</span>
+                </div>
+              </div>
+
+              <!-- Карточка со спутниковыми исследованиями из Google Earth Engine -->
+              <div class="gee-research-card">
+                <div class="gee-research-card-header">
+                  <div class="gee-research-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                      <path d="M2 12h20"></path>
+                    </svg>
+                    <span class="i18n-node" data-i18n="city_kzn_research_title">Казань: Анализ изменений за 10 лет</span>
+                  </div>
+                  <div class="gee-research-badges">
+                    <span class="gee-pill-tag highlight">Sentinel-2 L2A</span>
+                    <span class="gee-pill-tag">Google Earth Engine</span>
+                    <span class="gee-pill-tag i18n-node" data-i18n="tag_resolution">10 м/пикс</span>
+                  </div>
+                </div>
+
+                <div class="gee-map-stage" onclick="openMapModal('/Казань.png', 'Казань: Анализ изменений за 10 лет')">
+                  <img src="/Казань.png" alt="Казань: Анализ изменений за 10 лет" class="gee-map-img" loading="lazy" onerror="if(!this.dataset.tried1){this.dataset.tried1='1';this.src='/images/Казань.png';}else if(!this.dataset.tried2){this.dataset.tried2='1';this.src='/kazan.png';}" />
+                  <button type="button" class="gee-zoom-btn" aria-label="Увеличить карту">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                    <span class="i18n-node" data-i18n="zoom_map_btn">Увеличить снимок</span>
+                  </button>
+
+                  <div class="gee-snapshot-overlay">
+                    <div class="gee-overlay-heading i18n-node" data-i18n="city_kzn_research_title">Казань: Анализ изменений за 10 лет</div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#dc2626; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_spb_loss">Убыль леса:</span>
+                      <strong>3 659 га (36.6 км²)</strong>
+                    </div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#16a34a; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_spb_gain">Прирост зелени:</span>
+                      <strong>6 616 га (66.2 км²)</strong>
+                    </div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#ea580c; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_kzn_built">Новая застройка:</span>
+                      <strong>1 492 га (14.9 км²)</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Легенда -->
+              <div class="gee-legend">
+                <div class="legend-item"><span class="legend-dot dot-red"></span><span class="i18n-node" data-i18n="legend_kzn_red">Красный: Вырубка и фрагментация лесов (ΔNDVI &lt; -0.2)</span></div>
+                <div class="legend-item"><span class="legend-dot dot-orange"></span><span class="i18n-node" data-i18n="legend_kzn_orange">Оранжевый: Застройка новых кварталов и хабов (ΔNDBI &gt; +0.15)</span></div>
+                <div class="legend-item"><span class="legend-dot dot-green"></span><span class="i18n-node" data-i18n="legend_kzn_green">Зеленый: Прирост набережных и парковых зон (ΔNDVI &gt; +0.2)</span></div>
+              </div>
+
+              <!-- Вывод -->
+              <div class="city-takeaway-box">
+                <div class="takeaway-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="takeaway-text">
+                  <h5 class="i18n-node" data-i18n="trend_title">Главный тренд трансформации (2016–2026):</h5>
+                  <p class="i18n-node" data-i18n="city_kzn_trend">
+                    Лучший экологический баланс: прирост растительности (+6 616 га) практически вдвое превышает убыль леса (-3 659 га), при сдержанном темпе новой застройки (1 492 га).
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CITY 5: Новосибирск -->
+          <div class="city-panel" id="city-panel-nsk" role="tabpanel">
+            <div class="city-card">
+              <div class="city-header-row">
+                <div class="city-title-group">
+                  <h3 class="i18n-node" data-i18n="city_nsk_name">Новосибирск</h3>
+                  <span class="city-archetype-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    <span class="i18n-node" data-i18n="city_nsk_archetype">Город-наука / Сибирский форпост</span>
+                  </span>
+                  <p class="city-intro-desc desktop-only-desc i18n-node" data-i18n="city_nsk_desc">
+                    Сибирский мегаполис разрезан рекой Обь на индустриальное левобережье и научный правый берег. Легендарная концепция Академгородка «город в лесу» за последние 10 лет испытывает сильное давление: точечное расширение научных кампусов, транспортные развязки и коттеджная застройка реликтовых сосновых боров.
+                  </p>
+                  <!-- Компактная мобильная сводка -->
+                  <div class="city-mobile-summary">
+                    <div class="city-mobile-summary-header">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      <span class="i18n-node" data-i18n="city_mobile_summary_title">Ключевые факты исследования:</span>
+                    </div>
+                    <ul class="city-mobile-points-list">
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_nsk_m1">📉 <strong>Убыль леса:</strong> 6 679 га (вырубка сосновых боров под жилье)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_nsk_m2">🌿 <strong>Прирост зелени:</strong> 8 846 га (зарастание пойменных островов Оби)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_nsk_m3">🏗️ <strong>Новая застройка:</strong> 2 883 га (кампусы Академгородка и развязки)</li>
+                      <li class="city-mobile-point-item i18n-node" data-i18n="city_nsk_m4">⚡ <strong>Итог:</strong> Баланс +2 167 га, но растет антропогенное давление</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3 мини-статистики из исследования пользователя -->
+              <div class="city-stats-grid">
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_spb_loss">Убыль леса</span>
+                  <span class="city-stat-value stat-loss">6 679 га</span>
+                  <span class="city-stat-sub">66.8 км²</span>
+                </div>
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_spb_gain">Прирост зелени</span>
+                  <span class="city-stat-value stat-growth" style="color: #16a34a;">8 846 га</span>
+                  <span class="city-stat-sub">88.5 км²</span>
+                </div>
+                <div class="city-stat-box">
+                  <span class="city-stat-label i18n-node" data-i18n="stat_kzn_built">Новая застройка</span>
+                  <span class="city-stat-value stat-balance" style="color: #ea580c;">2 883 га</span>
+                  <span class="city-stat-sub">28.8 км²</span>
+                </div>
+              </div>
+
+              <!-- Карточка со спутниковыми исследованиями из Google Earth Engine -->
+              <div class="gee-research-card">
+                <div class="gee-research-card-header">
+                  <div class="gee-research-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                      <path d="M2 12h20"></path>
+                    </svg>
+                    <span class="i18n-node" data-i18n="city_nsk_research_title">Новосибирск: Анализ изменений за 10 лет</span>
+                  </div>
+                  <div class="gee-research-badges">
+                    <span class="gee-pill-tag highlight">Sentinel-2 L2A</span>
+                    <span class="gee-pill-tag">Google Earth Engine</span>
+                    <span class="gee-pill-tag i18n-node" data-i18n="tag_resolution">10 м/пикс</span>
+                  </div>
+                </div>
+
+                <div class="gee-map-stage" onclick="openMapModal('/Новосибирск.png', 'Новосибирск: Анализ изменений за 10 лет')">
+                  <img src="/Новосибирск.png" alt="Новосибирск: Анализ изменений за 10 лет" class="gee-map-img" loading="lazy" onerror="if(!this.dataset.tried1){this.dataset.tried1='1';this.src='/images/Новосибирск.png';}else if(!this.dataset.tried2){this.dataset.tried2='1';this.src='/novosibirsk.png';}" />
+                  <button type="button" class="gee-zoom-btn" aria-label="Увеличить карту">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                    <span class="i18n-node" data-i18n="zoom_map_btn">Увеличить снимок</span>
+                  </button>
+
+                  <div class="gee-snapshot-overlay">
+                    <div class="gee-overlay-heading i18n-node" data-i18n="city_nsk_research_title">Новосибирск: Анализ изменений за 10 лет</div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#dc2626; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_spb_loss">Убыль леса:</span>
+                      <strong>6 679 га (66.8 км²)</strong>
+                    </div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#16a34a; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_spb_gain">Прирост зелени:</span>
+                      <strong>8 846 га (88.5 км²)</strong>
+                    </div>
+                    <div class="gee-overlay-item">
+                      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#ea580c; flex-shrink:0;"></span>
+                      <span class="i18n-node" data-i18n="stat_kzn_built">Новая застройка:</span>
+                      <strong>2 883 га (28.8 км²)</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Легенда -->
+              <div class="gee-legend">
+                <div class="legend-item"><span class="legend-dot dot-red"></span><span class="i18n-node" data-i18n="legend_nsk_red">Красный: Вырубка участков сосновых боров (ΔNDVI &lt; -0.2)</span></div>
+                <div class="legend-item"><span class="legend-dot dot-orange"></span><span class="i18n-node" data-i18n="legend_nsk_orange">Оранжевый: Застройка кампусов и развязок (ΔNDBI &gt; +0.15)</span></div>
+                <div class="legend-item"><span class="legend-dot dot-green"></span><span class="i18n-node" data-i18n="legend_nsk_green">Зеленый: Зарастание пойменных островов Оби (ΔNDVI &gt; +0.2)</span></div>
+              </div>
+
+              <!-- Вывод -->
+              <div class="city-takeaway-box">
+                <div class="takeaway-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="takeaway-text">
+                  <h5 class="i18n-node" data-i18n="trend_title">Главный тренд трансформации (2016–2026):</h5>
+                  <p class="i18n-node" data-i18n="city_nsk_trend">
+                    Уверенный суммарный прирост зелени (+8 846 га) благодаря зарастанию поймы Оби, однако сохраняется локальная угроза реликтовым сосновым массивам из-за дорожного строительства и кампусов (2 883 га).
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Блок «Методология в 3 шага» -->
+      <section id="methodology">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-eyebrow i18n-node" data-i18n="method_eyebrow">Научный пайплайн</span>
+            <h2 class="section-title i18n-node" data-i18n="method_title">Методология исследования в 3 шага</h2>
+            <p class="section-subtitle i18n-node" data-i18n="method_subtitle">
+              От сырых спектральных каналов европейской спутниковой группировки Sentinel-2 до точного расчета площадей трансформации городской среды.
+            </p>
+          </div>
+
+          <!-- Интерактивный аккордеон шагов методологии -->
+          <div class="methodology-accordion" id="accordion-container">
+            <!-- Аккордеон 1 (Активен по умолчанию) -->
+            <div class="accordion-node active" id="acc-item-1">
+              <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+                <div class="accordion-header-info">
+                  <span class="accordion-num">01 /</span>
+                  <span class="accordion-name i18n-node" data-i18n="method_step_1_title">Загрузка и фильтрация безоблачных снимков Sentinel-2 L2A</span>
+                </div>
+                <span class="accordion-badge-state">[-]</span>
+              </div>
+              <div class="accordion-body">
+                <div class="accordion-summary-pill i18n-node" data-i18n="method_step_1_summary">⚡ <strong>Коротко:</strong> Безоблачный летний композит 2016 vs 2026 без теней и дымки (QA60 + S2cloudless).</div>
+                <p class="desktop-only-desc i18n-node" data-i18n="method_step_1_body">
+                  Формирование медианных композитов европейской группировки спутников Sentinel-2 MSI (Level-2A, калибровка Bottom of Atmosphere reflectance) за летние месяцы (июнь–август) 2016 и 2026 годов. Автоматическое маскирование облачности, дымки и теней осуществляется с помощью попиксельного анализа диапазона QA60 и алгоритма S2cloudless, что гарантирует 100% сопоставимость пикселей между декадами без спектрального шума.
+                </p>
+              </div>
+            </div>
+
+            <!-- Аккордеон 2 -->
+            <div class="accordion-node" id="acc-item-2">
+              <div class="accordion-header" role="button" tabindex="0" aria-expanded="false">
+                <div class="accordion-header-info">
+                  <span class="accordion-num">02 /</span>
+                  <span class="accordion-name i18n-node" data-i18n="method_step_2_title">Семантический расчет спектральных индексов NDVI и NDBI</span>
+                </div>
+                <span class="accordion-badge-state">[+]</span>
+              </div>
+              <div class="accordion-body">
+                <div class="accordion-summary-pill i18n-node" data-i18n="method_step_2_summary">⚡ <strong>Коротко:</strong> NDVI = зелень (10 м/пикс), NDBI = бетон и асфальт (SWIR). Сравнение исключает сезонные погрешности.</div>
+                <p class="desktop-only-desc i18n-node" data-i18n="method_step_2_body">
+                  Вычисление нормализованного разностного вегетационного индекса NDVI = (B8 - B4) / (B8 + B4) для выявления хлорофилловой активности растительности (разрешение 10 м/пикс) и индекса урбанизации NDBI = (B11 - B8) / (B11 + B8) на базе коротковолнового инфракрасного диапазона SWIR. Разностная матрица (ΔNDVI и ΔNDBI) позволяет дифференцировать естественное сезонное увядание от необратимого бетонирования почвы под новые кварталы.
+                </p>
+              </div>
+            </div>
+
+            <!-- Аккордеон 3 -->
+            <div class="accordion-node" id="acc-item-3">
+              <div class="accordion-header" role="button" tabindex="0" aria-expanded="false">
+                <div class="accordion-header-info">
+                  <span class="accordion-num">03 /</span>
+                  <span class="accordion-name i18n-node" data-i18n="method_step_3_title">Геопространственный расчет баланса площадей reduceRegion</span>
+                </div>
+                <span class="accordion-badge-state">[+]</span>
+              </div>
+              <div class="accordion-body">
+                <div class="accordion-summary-pill i18n-node" data-i18n="method_step_3_summary">⚡ <strong>Коротко:</strong> Попиксельный подсчет площадей через ee.Reducer.sum() с шагом 10 м в официальных границах каждого города.</div>
+                <p class="desktop-only-desc i18n-node" data-i18n="method_step_3_body">
+                  Пороговая бинаризация изменений и пространственное взвешивание площади через облачный редуктор Google Earth Engine <code>ee.Reducer.sum()</code> с пространственным шагом 10 метров. Подсчет итогового экологического баланса (гектары утраченной зрелой растительности против гектаров вновь возведенной искусственной инфраструктуры) в пределах официальных административных границ каждого мегаполиса.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Блок запроса открытых данных (Inquiry CTA) -->
+      <section id="inquiry">
+        <div class="container">
+          <div class="inquiry-wrap">
+            <h2 class="inquiry-title i18n-node" data-i18n="inquiry_title">Исследуйте спутниковые данные городов</h2>
+            <p class="inquiry-subtitle i18n-node" data-i18n="inquiry_subtitle">
+              Получите открытый датасет геопространственных расчетов, GeoTIFF растры и алгоритмы Google Earth Engine для курсовых, дипломов или урбанистических исследований.
+            </p>
+
+            <form class="inquiry-form-row" id="inquiry-form" onsubmit="event.preventDefault(); alert('Спасибо! Запрос принят. Ссылка на репозиторий с датасетами направлена на указанный контакт.');">
+              <input
+                type="text"
+                class="inquiry-input i18n-node"
+                data-i18n-ph="inquiry_placeholder"
+                id="inquiry-email-input"
+                placeholder="Ваш E-mail или Telegram..."
+                required
+              />
+              <button type="submit" class="btn btn-accent i18n-node" id="inquiry-submit-btn" data-i18n="inquiry_btn">
+                Получить датасет →
+              </button>
+            </form>
+
+            <div class="inquiry-tags">
+              <span class="inquiry-tag">Sentinel-2 L2A</span>
+              <span class="inquiry-tag">Google Earth Engine</span>
+              <span class="inquiry-tag">NDVI / NDBI Спектры</span>
+              <span class="inquiry-tag">Python & JS API</span>
+              <span class="inquiry-tag">Open Data CC-BY 4.0</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 7. Подвал (Footer) -->
+    <footer id="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <div class="footer-logo">
+              <span class="logo-dot"></span>
+              <span class="i18n-node" data-i18n="footer_brand">Спутниковый мониторинг</span>
+            </div>
+            <p class="footer-desc i18n-node" data-i18n="footer_desc">
+              Применение спутниковых съёмок Sentinel-2 для многолетнего мониторинга природных процессов и динамики городских ландшафтов (2016–2026).
+            </p>
+          </div>
+
+          <div class="footer-links-group">
+            <h6 class="i18n-node" data-i18n="footer_nav_heading">Навигация</h6>
+            <ul class="footer-links-list">
+              <li><a href="#hero" class="i18n-node" data-i18n="footer_link_hero">Главный экран</a></li>
+              <li><a href="#assistant" class="i18n-node" data-i18n="footer_link_assistant">Гео-ассистент</a></li>
+              <li><a href="#cities" class="i18n-node" data-i18n="footer_link_cities">База 5 городов</a></li>
+              <li><a href="#methodology" class="i18n-node" data-i18n="footer_link_method">Методология Sentinel-2</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-links-group">
+            <h6 class="i18n-node" data-i18n="footer_res_heading">Ресурсы и данные</h6>
+            <ul class="footer-links-list">
+              <li><a href="https://code.earthengine.google.com/" target="_blank" rel="noopener">Google Earth Engine</a></li>
+              <li><a href="https://sentinels.copernicus.eu/" target="_blank" rel="noopener">Copernicus Sentinel-2</a></li>
+              <li><a href="#cities" class="i18n-node" data-i18n="footer_link_maps">Спутниковые карты городов</a></li>
+              <li><a href="#inquiry" class="i18n-node" data-i18n="footer_link_inquiry">Запрос датасета</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <div class="i18n-node" data-i18n="footer_copyright">
+            © 2026 Санкт-Петербургский государственный университет (СПбГУ). Все права защищены.
+          </div>
+          <div class="footer-badges">
+            <span class="footer-pill">
+              <span class="badge-orange-dot"></span>
+              <span class="i18n-node" data-i18n="footer_partner">СПбГУ Академический партнер</span>
+            </span>
+            <span class="footer-pill">
+              Sentinel-2 MSI Level-2A
+            </span>
+            <span class="footer-pill">
+              Google Earth Engine Open Data
+            </span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Модальное окно (Lightbox) для полноэкранного детального просмотра карт Google Earth Engine -->
+    <div class="map-modal" id="map-modal-container" role="dialog" aria-modal="true" aria-label="Просмотр карты">
+      <div class="map-modal-dialog">
+        <div class="map-modal-header">
+          <div class="map-modal-title" id="map-modal-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+            <span id="map-modal-title-text">Спутниковая карта</span>
+          </div>
+          <button type="button" class="map-modal-close" id="map-modal-close-btn" aria-label="Закрыть">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="map-modal-body">
+          <img src="" alt="Спутниковый снимок" id="map-modal-image" class="map-modal-img" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Vanilla JS для интерактивного спутникового ассистента, табов городов, аккордеона методологии, модального окна и смены языка -->
+    <script>
+      (function () {
+        // --- 0. Multilingual (i18n) Engine with Smooth Animation ---
+        let currentLang = localStorage.getItem('geo_app_lang') || 'ru';
+
+        const I18N_DICT = {
+          ru: {
+            page_title: "Спутниковый мониторинг природных процессов мегаполисов (2016–2026)",
+            page_desc: "Применение спутниковых съёмок Sentinel-2 для многолетнего мониторинга природных процессов и динамики застройки 5 мегаполисов России.",
+            nav_brand: "Спутниковый мониторинг",
+            nav_assistant: "Гео-ассистент",
+            nav_comparison: "Сравнение методов",
+            nav_cities: "Города",
+            nav_methodology: "Методология",
+            nav_cta: "Смотреть исследование",
+            lang_label: "Язык:",
+            hero_badge: "Спутниковый мониторинг Sentinel-2 • 10 лет наблюдений (2016–2026)",
+            hero_title: "Применение спутниковых съёмок для многолетнего мониторинга природных процессов",
+            hero_desc: "Спутниковый мониторинг природных процессов мегаполисов",
+            hero_btn_cities: "Данные 5 городов →",
+            hero_btn_assistant: "Спутниковый гео-ассистент ↓",
+            assistant_eyebrow: "Интерактивный анализ",
+            assistant_title: "Спутниковый гео-ассистент",
+            assistant_subtitle: "Задайте исследовательский вопрос о динамике эко-каркаса, индексах NDVI/NDBI и результатах спутникового мониторинга 5 мегаполисов.",
+            assistant_bot_name: "Спутниковый гео-ассистент",
+            assistant_status: "Sentinel-2 L2A • онлайн",
+            assistant_greeting: "Привет! Я спутниковый гео-ассистент проекта. Выберите один из готовых исследовательских вопросов или напишите свой, чтобы мгновенно получить пространственные расчеты по городам за 2016–2026 гг.",
+            q_loss: "Какой город потерял больше всего лесов?",
+            q_ndvi: "Что такое индексы NDVI и NDBI?",
+            q_ekb: "Что показал Екатеринбург за 10 лет?",
+            q_msk: "Каковы итоги мониторинга Москвы?",
+            q_clouds: "Как отсекаются облака в Sentinel-2?",
+            q_gee: "В чем преимущество Google Earth Engine?",
+            assistant_placeholder: "Задайте вопрос о спутниковых данных (например: Казань или NDVI)...",
+            assistant_send: "Отправить →",
+            comparison_eyebrow: "Сравнение подходов",
+            comparison_title: "Традиционный мониторинг vs Спутниковый анализ",
+            comparison_subtitle: "Ключевые различия классических наземных обследований и мультиспектральной спутниковой съемки Sentinel-2.",
+            comp_trad_title: "Традиционный подход",
+            comp_trad_1_title: "Медленный точечный охват",
+            comp_trad_1_desc: "Полевые обследования длятся месяцами и охватывают лишь отдельные парки, упуская окраины.",
+            comp_trad_2_title: "Устаревающие генпланы",
+            comp_trad_2_desc: "Бумажные схемы обновляются раз в 5–10 лет и не успевают фиксировать точечные вырубки и застройку.",
+            comp_trad_3_title: "Субъективность и отсутствие архива",
+            comp_trad_3_desc: "Сложность межрегиональной калибровки и невозможность восстановить состояние крон за прошлые годы.",
+            comp_sat_title: "Спутниковый анализ Sentinel-2",
+            comp_sat_1_title: "100% охват в единый пролет",
+            comp_sat_1_desc: "Спутник снимает всю агломерацию целиком с полосой захвата 290 км и шагом 10 м/пиксель.",
+            comp_sat_2_title: "Безоблачные летние композиты",
+            comp_sat_2_desc: "Медианный композитинг Google Earth Engine автоматически отсекает облака и тени за каждый сезон.",
+            comp_sat_3_title: "Объективные спектральные индексы",
+            comp_sat_3_desc: "Математический расчет NDVI и NDBI обеспечивает точную верификацию биомассы и антропогенных объектов.",
+            cities_eyebrow: "База данных мониторинга",
+            cities_title: "Топ-5 городов: Исследования и данные",
+            cities_subtitle: "Выберите город, чтобы просмотреть архетип, динамику растительного покрова, объем новой застройки и спутниковые карты изменений из Google Earth Engine.",
+            tab_ekb: "01 Екатеринбург",
+            badge_ural: "Урал",
+            tab_spb: "02 Санкт-Петербург",
+            badge_nw: "Северо-Запад",
+            tab_msk: "03 Москва",
+            badge_center: "Центр",
+            tab_kzn: "04 Казань",
+            badge_volga: "Поволжье",
+            tab_nsk: "05 Новосибирск",
+            badge_siberia: "Сибирь",
+            stat_veg_loss: "Убыль растительности",
+            stat_veg_gain: "Прирост растительности",
+            stat_built_growth: "Прирост застройки",
+            stat_spb_loss: "Убыль леса",
+            stat_spb_gain: "Прирост зелени",
+            stat_spb_built: "Новая застройка и намывы",
+            stat_kzn_built: "Новая застройка",
+            zoom_map_btn: "Увеличить снимок",
+            tag_resolution: "10 м/пикс",
+            legend_red: "Красный: Убыль растительности / вырубка (ΔNDVI < -0.2)",
+            legend_orange: "Оранжевый: Прирост застройки / бетон (ΔNDBI > +0.15)",
+            legend_green: "Зеленый: Прирост растительности / озеленение (ΔNDVI > +0.2)",
+            legend_spb_red: "Красный: Убыль леса и пригородных перелесков (ΔNDVI < -0.2)",
+            legend_spb_orange: "Оранжевый: Застройка и намывные территории (ΔNDBI > +0.15)",
+            legend_spb_green: "Зеленый: Прирост зелени и парков (ΔNDVI > +0.2)",
+            legend_kzn_red: "Красный: Вырубка и фрагментация лесов (ΔNDVI < -0.2)",
+            legend_kzn_orange: "Оранжевый: Застройка новых кварталов и хабов (ΔNDBI > +0.15)",
+            legend_kzn_green: "Зеленый: Прирост набережных и парковых зон (ΔNDVI > +0.2)",
+            legend_nsk_red: "Красный: Вырубка участков сосновых боров (ΔNDVI < -0.2)",
+            legend_nsk_orange: "Оранжевый: Застройка кампусов и развязок (ΔNDBI > +0.15)",
+            legend_nsk_green: "Зеленый: Зарастание пойменных островов Оби (ΔNDVI > +0.2)",
+            trend_title: "Главный тренд трансформации (2016–2026):",
+            city_ekb_name: "Екатеринбург",
+            city_ekb_archetype: "Город-завод / Индустриальное сердце",
+            city_ekb_desc: "Исторически сформированный вокруг заводских плотин и промышленных гигантов, Екатеринбург за 10 лет активно редевелопит промзоны вдоль реки Исеть. При этом стремительное расширение южных и юго-западных районов (Академический, Солнечный) усилило антропогенную нагрузку на лесопарковый зеленый пояс.",
+            city_ekb_research_title: "Екатеринбург: Анализ изменений за 10 лет",
+            city_ekb_trend: "Баланс биомассы положителен (+3 479 га): нарастание естественной поросли и компенсационные посадки опережают вырубку, при этом застройка (+3 095 га) активно поглощает южный и юго-западный лесопарковый пояс.",
+            city_spb_name: "Санкт-Петербург",
+            city_spb_archetype: "Город-культура / Северо-западный хранитель",
+            city_spb_desc: "Бережно сохраняя исторический каменный центр под эгидой ЮНЕСКО, Санкт-Петербург направил всю урбанизационную энергию на окраины: приграничные Мурино, Кудрово, Шушары и намывные территории Васильевского острова. Близость Финского залива и болотных заказников обостряет вопрос сохранения природных буферов.",
+            city_spb_research_title: "Санкт-Петербург: Баланс за 10 лет",
+            city_spb_trend: "Масштабная убыль лесного пояса (16 181 га) на фоне плотной субурбанизации вдоль КАД и создания намывов (11 748 га) при ограниченном приросте зелени (3 851 га).",
+            city_msk_name: "Москва",
+            city_msk_archetype: "Город-гигант / Динамичный центр",
+            city_msk_desc: "Крупнейшая агломерация страны переживает масштабную экспансию в юго-западном векторе (ТиНАО), куда сместились основные объемы нового девелопмента. Внутри МКАД ключевым драйвером выступают реновация, переосмысление бывших промзон («ЗИЛ», «Серп и Молот») и масштабное благоустройство парковых зон.",
+            city_msk_research_title: "Москва: Анализ изменений за 10 лет",
+            city_msk_trend: "Масштабнейший объем антропогенной экспансии (22 516 га новой застройки) и убыль 35 942 га растительности, преимущественно в южном и юго-западном векторах ТиНАО.",
+            city_kzn_name: "Казань",
+            city_kzn_archetype: "Город-инноватор / Мост традиций и будущего",
+            city_kzn_desc: "Столица Татарстана выделяется одной из самых взвешенных стратегий развития водно-зеленого каркаса в стране. Проект масштабного эко-развития реки Казанки, ревитализация берегов озер Кабан и развитие инновационного спутника Иннополис позволили минимизировать негативные последствия строительного бума.",
+            city_kzn_research_title: "Казань: Анализ изменений за 10 лет",
+            city_kzn_trend: "Лучший экологический баланс: прирост растительности (+6 616 га) практически вдвое превышает убыль леса (-3 659 га), при сдержанном темпе новой застройки (1 492 га).",
+            city_nsk_name: "Новосибирск",
+            city_nsk_archetype: "Город-наука / Сибирский форпост",
+            city_nsk_desc: "Сибирский мегаполис разрезан рекой Обь на индустриальное левобережье и научный правый берег. Легендарная концепция Академгородка «город в лесу» за последние 10 лет испытывает сильное давление: точечное расширение научных кампусов, транспортные развязки и коттеджная застройка реликтовых сосновых боров.",
+            city_nsk_research_title: "Новосибирск: Анализ изменений за 10 лет",
+            city_nsk_trend: "Уверенный суммарный прирост зелени (+8 846 га) благодаря зарастанию поймы Оби, однако сохраняется локальная угроза реликтовым сосновым массивам из-за дорожного строительства и кампусов (2 883 га).",
+            method_eyebrow: "Научный пайплайн",
+            method_title: "Методология исследования в 3 шага",
+            method_subtitle: "От сырых спектральных каналов европейской спутниковой группировки Sentinel-2 до точного расчета площадей трансформации городской среды.",
+            method_step_1_title: "Загрузка и фильтрация безоблачных снимков Sentinel-2 L2A",
+            method_step_1_body: "Формирование медианных композитов европейской группировки спутников Sentinel-2 MSI (Level-2A, калибровка Bottom of Atmosphere reflectance) за летние месяцы (июнь–август) 2016 и 2026 годов. Автоматическое маскирование облачности, дымки и теней осуществляется с помощью попиксельного анализа диапазона QA60 и алгоритма S2cloudless, что гарантирует 100% сопоставимость пикселей между декадами без спектрального шума.",
+            method_step_2_title: "Семантический расчет спектральных индексов NDVI и NDBI",
+            method_step_2_body: "Вычисление нормализованного разностного вегетационного индекса NDVI = (B8 - B4) / (B8 + B4) для выявления хлорофилловой активности растительности (разрешение 10 м/пикс) и индекса урбанизации NDBI = (B11 - B8) / (B11 + B8) на базе коротковолнового инфракрасного диапазона SWIR. Разностная матрица (ΔNDVI и ΔNDBI) позволяет дифференцировать естественное сезонное увядание от необратимого бетонирования почвы под новые кварталы.",
+            method_step_3_title: "Геопространственный расчет баланса площадей reduceRegion",
+            method_step_3_body: "Пороговая бинаризация изменений и пространственное взвешивание площади через облачный редуктор Google Earth Engine ee.Reducer.sum() с пространственным шагом 10 метров. Подсчет итогового экологического баланса (гектары утраченной зрелой растительности против гектаров вновь возведенной искусственной инфраструктуры) в пределах официальных административных границ каждого мегаполиса.",
+            inquiry_title: "Исследуйте спутниковые данные городов",
+            inquiry_subtitle: "Получите открытый датасет геопространственных расчетов, GeoTIFF растры и алгоритмы Google Earth Engine для курсовых, дипломов или урбанистических исследований.",
+            inquiry_placeholder: "Ваш E-mail или Telegram...",
+            inquiry_btn: "Получить датасет →",
+            footer_brand: "Спутниковый мониторинг",
+            footer_desc: "Применение спутниковых съёмок Sentinel-2 для многолетнего мониторинга природных процессов и динамики городских ландшафтов (2016–2026).",
+            footer_nav_heading: "Навигация",
+            footer_res_heading: "Ресурсы и данные",
+            footer_link_hero: "Главный экран",
+            footer_link_assistant: "Гео-ассистент",
+            footer_link_comp: "Сравнение методов",
+            footer_link_cities: "База 5 городов",
+            footer_link_method: "Методология Sentinel-2",
+            footer_link_maps: "Спутниковые карты городов",
+            footer_link_inquiry: "Запрос датасета",
+            footer_copyright: "© 2026 Санкт-Петербургский государственный университет (СПбГУ). Все права защищены.",
+            footer_partner: "СПбГУ Академический партнер",
+            hero_highlights_title: "Самое главное за 10 лет наблюдений:",
+            hero_h1_lead: "Спутники Sentinel-2:",
+            hero_h1_text: "10 лет непрерывных наблюдений (разрешение 10 м/пикс).",
+            hero_h2_lead: "Максимум потерь:",
+            hero_h2_text: "Москва (-35 942 га) и Петербург (-16 181 га леса).",
+            hero_h3_lead: "Лидер баланса:",
+            hero_h3_text: "Казань — прирост зелени в 1.8 раза превышает вырубку.",
+            city_mobile_summary_title: "Ключевые факты исследования:",
+            city_ekb_m1: "📉 <strong>Убыль:</strong> 6 808 га (юго-западный лесопарк)",
+            city_ekb_m2: "🌿 <strong>Прирост:</strong> 10 287 га (компенсации и поросль)",
+            city_ekb_m3: "🏗️ <strong>Застройка:</strong> 3 095 га (Академический, Солнечный)",
+            city_ekb_m4: "⚡ <strong>Итог:</strong> Баланс +3 479 га, но растет нагрузка на зеленый пояс",
+            city_spb_m1: "📉 <strong>Убыль леса:</strong> 16 181 га (Мурино, Кудрово, КАД)",
+            city_spb_m2: "🌿 <strong>Прирост:</strong> 3 851 га (ограничен плотной застройкой)",
+            city_spb_m3: "🏗️ <strong>Застройка и намывы:</strong> 11 748 га (Васильевский о-в, Шушары)",
+            city_spb_m4: "⚡ <strong>Итог:</strong> Дефицит биомассы (-12 330 га) из-за субурбанизации",
+            city_msk_m1: "📉 <strong>Убыль:</strong> 35 942 га (максимум среди 5 городов, вектор ТиНАО)",
+            city_msk_m2: "🌿 <strong>Прирост:</strong> 13 017 га (благоустройство и озеленение)",
+            city_msk_m3: "🏗️ <strong>Застройка:</strong> 22 516 га (новые жилые и дорожные кластеры)",
+            city_msk_m4: "⚡ <strong>Итог:</strong> Рекордная антропогенная нагрузка за 10 лет",
+            city_kzn_m1: "📉 <strong>Убыль леса:</strong> 3 659 га (минимальная среди 5 мегаполисов)",
+            city_kzn_m2: "🌿 <strong>Прирост зелени:</strong> 6 616 га (набережные Казанки и экопарки)",
+            city_kzn_m3: "🏗️ <strong>Новая застройка:</strong> 1 492 га (сдержанный эко-ориентированный темп)",
+            city_kzn_m4: "⚡ <strong>Итог:</strong> Лучший экологический баланс (+2 957 га)",
+            city_nsk_m1: "📉 <strong>Убыль леса:</strong> 6 679 га (вырубка сосновых боров под жилье)",
+            city_nsk_m2: "🌿 <strong>Прирост зелени:</strong> 8 846 га (зарастание пойменных островов Оби)",
+            city_nsk_m3: "🏗️ <strong>Новая застройка:</strong> 2 883 га (кампусы Академгородка и развязки)",
+            city_nsk_m4: "⚡ <strong>Итог:</strong> Баланс +2 167 га, но растет антропогенное давление",
+            method_step_1_summary: "⚡ <strong>Коротко:</strong> Безоблачный летний композит 2016 vs 2026 без теней и дымки (QA60 + S2cloudless).",
+            method_step_2_summary: "⚡ <strong>Коротко:</strong> NDVI = зелень (10 м/пикс), NDBI = бетон и асфальт (SWIR). Сравнение исключает сезонные погрешности.",
+            method_step_3_summary: "⚡ <strong>Коротко:</strong> Попиксельный подсчет площадей через ee.Reducer.sum() с шагом 10 м в официальных границах каждого города."
+          },
+          en: {
+            page_title: "Satellite Monitoring of Environmental Dynamics in Metropolises (2016–2026)",
+            page_desc: "Application of Sentinel-2 satellite imagery for multi-year monitoring of natural processes and urban transformation across 5 Russian metropolitan areas.",
+            nav_brand: "Satellite Monitoring",
+            nav_assistant: "Geo-Assistant",
+            nav_comparison: "Method Comparison",
+            nav_cities: "Cities",
+            nav_methodology: "Methodology",
+            nav_cta: "View Research",
+            lang_label: "Language:",
+            hero_badge: "Sentinel-2 Satellite Monitoring • 10-Year Observations (2016–2026)",
+            hero_title: "Application of Satellite Imagery for Multi-Year Monitoring of Natural Processes",
+            hero_desc: "Satellite monitoring of environmental dynamics across Russian metropolitan areas",
+            hero_btn_cities: "5 Cities Data →",
+            hero_btn_assistant: "Satellite Geo-Assistant ↓",
+            assistant_eyebrow: "Interactive Analysis",
+            assistant_title: "Satellite Geo-Assistant",
+            assistant_subtitle: "Ask a research query on ecological network dynamics, NDVI/NDBI indices, and monitoring metrics across 5 metropolitan areas.",
+            assistant_bot_name: "Satellite Geo-Assistant",
+            assistant_status: "Sentinel-2 L2A • Online",
+            assistant_greeting: "Hello! I am the project's satellite geo-assistant. Select one of the prepared research queries below or enter your own to retrieve spatial calculations for 2016–2026.",
+            q_loss: "Which city lost the most forest?",
+            q_ndvi: "What are NDVI and NDBI indices?",
+            q_ekb: "What did Yekaterinburg show in 10 years?",
+            q_msk: "What are Moscow's monitoring outcomes?",
+            q_clouds: "How are clouds filtered in Sentinel-2?",
+            q_gee: "What is the advantage of Google Earth Engine?",
+            assistant_placeholder: "Ask a question about satellite data (e.g., Kazan or NDVI)...",
+            assistant_send: "Send →",
+            comparison_eyebrow: "Approach Comparison",
+            comparison_title: "Traditional Monitoring vs Satellite Analysis",
+            comparison_subtitle: "Key differences between classical ground surveys and Sentinel-2 multispectral satellite imagery.",
+            comp_trad_title: "Traditional Approach",
+            comp_trad_1_title: "Slow Point-by-Point Coverage",
+            comp_trad_1_desc: "Field surveys take months and cover only isolated parks, missing rapidly changing suburbs.",
+            comp_trad_2_title: "Outdated Master Plans",
+            comp_trad_2_desc: "Paper maps are updated once every 5–10 years, failing to track localized deforestation and construction.",
+            comp_trad_3_title: "Subjectivity & Lack of Archive",
+            comp_trad_3_desc: "Difficulty of cross-regional calibration and inability to reconstruct past canopy states.",
+            comp_sat_title: "Sentinel-2 Satellite Analysis",
+            comp_sat_1_title: "100% Coverage in a Single Swath",
+            comp_sat_1_desc: "The satellite captures entire urban areas with a 290 km swath width at 10m/pixel spatial resolution.",
+            comp_sat_2_title: "Cloud-Free Summer Composites",
+            comp_sat_2_desc: "Google Earth Engine median pixel compositing automatically eliminates clouds and shadows for each season.",
+            comp_sat_3_title: "Objective Spectral Indices",
+            comp_sat_3_desc: "Mathematical derivation of NDVI and NDBI enables rigorous verification of biomass and built surfaces.",
+            cities_eyebrow: "Monitoring Database",
+            cities_title: "Top-5 Cities: Research & Data",
+            cities_subtitle: "Select a city to inspect its archetype, vegetation dynamics, built-up expansion, and satellite difference maps from Google Earth Engine.",
+            tab_ekb: "01 Yekaterinburg",
+            badge_ural: "Urals",
+            tab_spb: "02 Saint Petersburg",
+            badge_nw: "North-West",
+            tab_msk: "03 Moscow",
+            badge_center: "Central",
+            tab_kzn: "04 Kazan",
+            badge_volga: "Volga",
+            tab_nsk: "05 Novosibirsk",
+            badge_siberia: "Siberia",
+            stat_veg_loss: "Vegetation Loss",
+            stat_veg_gain: "Vegetation Gain",
+            stat_built_growth: "Built-up Gain",
+            stat_spb_loss: "Forest Loss",
+            stat_spb_gain: "Greenery Gain",
+            stat_spb_built: "New Construction & Reclamations",
+            stat_kzn_built: "New Construction",
+            zoom_map_btn: "Expand Map View",
+            tag_resolution: "10 m/pixel",
+            legend_red: "Red: Vegetation loss / clearing (ΔNDVI < -0.2)",
+            legend_orange: "Orange: Built-up expansion / concrete (ΔNDBI > +0.15)",
+            legend_green: "Green: Vegetation gain / greening (ΔNDVI > +0.2)",
+            legend_spb_red: "Red: Loss of forest and suburban woodlands (ΔNDVI < -0.2)",
+            legend_spb_orange: "Orange: Construction & reclaimed coastlines (ΔNDBI > +0.15)",
+            legend_spb_green: "Green: Greenery & park growth (ΔNDVI > +0.2)",
+            legend_kzn_red: "Red: Forest cutting and fragmentation (ΔNDVI < -0.2)",
+            legend_kzn_orange: "Orange: New residential quarters & hubs (ΔNDBI > +0.15)",
+            legend_kzn_green: "Green: Embankment & park growth (ΔNDVI > +0.2)",
+            legend_nsk_red: "Red: Pine forest clearing (ΔNDVI < -0.2)",
+            legend_nsk_orange: "Orange: Campus & highway construction (ΔNDBI > +0.15)",
+            legend_nsk_green: "Green: Overgrowth of Ob river floodplain islands (ΔNDVI > +0.2)",
+            trend_title: "Key Transformation Trend (2016–2026):",
+            city_ekb_name: "Yekaterinburg",
+            city_ekb_archetype: "Industrial Heart / Factory-City",
+            city_ekb_desc: "Historically built around factory dams and industrial giants, Yekaterinburg has actively redeveloped brownfields along the Iset River over the past decade. Rapid expansion into southern districts (Akademichesky, Solnechny) has intensified pressure on the surrounding forest-park green belt.",
+            city_ekb_research_title: "Yekaterinburg: 10-Year Change Analysis",
+            city_ekb_trend: "Biomass balance is positive (+3,479 ha): natural succession and compensatory plantings exceed deforestation, though urban expansion (+3,095 ha) actively encroaches on the southern forest-park belt.",
+            city_spb_name: "Saint Petersburg",
+            city_spb_archetype: "City of Culture / North-Western Guardian",
+            city_spb_desc: "Preserving its stone historical core under UNESCO protection, Saint Petersburg directed urban development outward to peripheral zones (Murino, Kudrovo, Shushary) and Gulf of Finland reclamation areas. Safeguarding surrounding wetlands and coastal buffers remains critical.",
+            city_spb_research_title: "Saint Petersburg: 10-Year Balance",
+            city_spb_trend: "Extensive loss of woodland buffer (16,181 ha) accompanied by dense ring-road suburbanization and marine reclamations (11,748 ha) against limited greenery addition (3,851 ha).",
+            city_msk_name: "Moscow",
+            city_msk_archetype: "Metropolitan Giant / Dynamic Core",
+            city_msk_desc: "The nation's largest metropolis undergoes massive south-western expansion (New Moscow), where major new developments concentrate. Within the Ring Road, redevelopment of industrial hubs (ZIL, Serp i Molot) and intensive park revitalization dominate.",
+            city_msk_research_title: "Moscow: 10-Year Change Analysis",
+            city_msk_trend: "Massive scale of built expansion (22,516 ha of new structures) and loss of 35,942 ha of vegetation, largely concentrated in the southern and south-western sectors.",
+            city_kzn_name: "Kazan",
+            city_kzn_archetype: "Innovative Hub / Bridge of Heritage & Future",
+            city_kzn_desc: "Tatarstan's capital stands out with one of the most balanced water-green framework strategies nationwide. Major eco-development along the Kazanka River and Kaban lakes has mitigated negative impacts of rapid construction.",
+            city_kzn_research_title: "Kazan: 10-Year Change Analysis",
+            city_kzn_trend: "Highest ecological balance: vegetation gain (+6,616 ha) nearly doubles forest reduction (-3,659 ha), accompanied by controlled built-up development (1,492 ha).",
+            city_nsk_name: "Novosibirsk",
+            city_nsk_archetype: "Science City / Siberian Outpost",
+            city_nsk_desc: "Split by the Ob River between industrial west and academic east, the Siberian hub faces pressure on Akademgorodok's 'city in the forest' heritage from campus expansions, freight interchanges, and suburban forest cutting.",
+            city_nsk_research_title: "Novosibirsk: 10-Year Change Analysis",
+            city_nsk_trend: "Solid net greenery growth (+8,846 ha) driven by Ob River floodplain succession, tempered by localized pressure on relict pine forests from infrastructure and campuses (2,883 ha).",
+            method_eyebrow: "Scientific Pipeline",
+            method_title: "Research Methodology in 3 Steps",
+            method_subtitle: "From raw Sentinel-2 spectral channels to precise geospatial area calculations of urban environmental change.",
+            method_step_1_title: "Ingestion & Cloud Filtering of Sentinel-2 L2A Imagery",
+            method_step_1_body: "Generating median composites of European Sentinel-2 MSI imagery (Level-2A, Bottom of Atmosphere reflectance) for summer months (June–August) 2016 and 2026. Automatic cloud, haze, and shadow masking via pixel-level QA60 and S2cloudless algorithms ensures 100% inter-decadal comparability.",
+            method_step_2_title: "Semantic Computation of NDVI and NDBI Spectral Indices",
+            method_step_2_body: "Computing NDVI = (B8 - B4) / (B8 + B4) to evaluate vegetation chlorophyll vitality (10m resolution) and NDBI = (B11 - B8) / (B11 + B8) utilizing short-wave infrared SWIR bands. Difference matrices (ΔNDVI and ΔNDBI) distinguish natural seasonal variation from permanent soil sealing.",
+            method_step_3_title: "Geospatial Area Balance Aggregation via reduceRegion",
+            method_step_3_body: "Threshold binarization and spatial area integration via Google Earth Engine ee.Reducer.sum() at 10-meter cell resolution. Calculating net environmental balance (hectares of lost mature biomass vs hectares of newly constructed built-up surfaces) within official metropolitan boundaries.",
+            inquiry_title: "Explore Urban Satellite Datasets",
+            inquiry_subtitle: "Access the open geospatial dataset, GeoTIFF rasters, and Google Earth Engine processing scripts for academic or urban studies.",
+            inquiry_placeholder: "Your E-mail or Telegram...",
+            inquiry_btn: "Get Dataset →",
+            footer_brand: "Satellite Monitoring",
+            footer_desc: "Application of Sentinel-2 satellite imagery for multi-year monitoring of natural processes and urban landscape transformation (2016–2026).",
+            footer_nav_heading: "Navigation",
+            footer_res_heading: "Resources & Data",
+            footer_link_hero: "Overview",
+            footer_link_assistant: "Geo-Assistant",
+            footer_link_comp: "Method Comparison",
+            footer_link_cities: "5 Cities Database",
+            footer_link_method: "Sentinel-2 Methodology",
+            footer_link_maps: "Satellite City Maps",
+            footer_link_inquiry: "Dataset Request",
+            footer_copyright: "© 2026 Saint Petersburg State University (SPbU). All rights reserved.",
+            footer_partner: "SPbU Academic Partner",
+            hero_highlights_title: "10-Year Key Highlights at a Glance:",
+            hero_h1_lead: "Sentinel-2 Satellites:",
+            hero_h1_text: "10 years of consistent observations (10 m/pixel resolution).",
+            hero_h2_lead: "Greatest Forest Losses:",
+            hero_h2_text: "Moscow (-35,942 ha) & St. Petersburg (-16,181 ha of woods).",
+            hero_h3_lead: "Best Ecological Balance:",
+            hero_h3_text: "Kazan — vegetation gains outpace clearing by 1.8x.",
+            city_mobile_summary_title: "Key Research Takeaways:",
+            city_ekb_m1: "📉 <strong>Loss:</strong> 6,808 ha (south-western green belt)",
+            city_ekb_m2: "🌿 <strong>Gain:</strong> 10,287 ha (succession & compensations)",
+            city_ekb_m3: "🏗️ <strong>Built-up:</strong> 3,095 ha (Akademichesky & Solnechny)",
+            city_ekb_m4: "⚡ <strong>Net:</strong> +3,479 ha balance, but rising pressure on outer parks",
+            city_spb_m1: "📉 <strong>Forest Loss:</strong> 16,181 ha (Murino, Kudrovo, Ring Road)",
+            city_spb_m2: "🌿 <strong>Green Gain:</strong> 3,851 ha (constrained by dense core)",
+            city_spb_m3: "🏗️ <strong>Construction & Fill:</strong> 11,748 ha (Gulf fill, Shushary)",
+            city_spb_m4: "⚡ <strong>Net:</strong> Biomass deficit (-12,330 ha) driven by suburban sprawl",
+            city_msk_m1: "📉 <strong>Loss:</strong> 35,942 ha (highest of all 5 cities, New Moscow sector)",
+            city_msk_m2: "🌿 <strong>Greening:</strong> 13,017 ha (park renovations & restoration)",
+            city_msk_m3: "🏗️ <strong>Built-up:</strong> 22,516 ha (major housing & transport grids)",
+            city_msk_m4: "⚡ <strong>Net:</strong> Record anthropogenic pressure over 10 years",
+            city_kzn_m1: "📉 <strong>Forest Loss:</strong> 3,659 ha (lowest among all 5 metropolises)",
+            city_kzn_m2: "🌿 <strong>Greenery Gain:</strong> 6,616 ha (Kazanka eco-parks & banks)",
+            city_kzn_m3: "🏗️ <strong>New Built-up:</strong> 1,492 ha (controlled eco-conscious growth)",
+            city_kzn_m4: "⚡ <strong>Net:</strong> Top ecological balance (+2,957 ha)",
+            city_nsk_m1: "📉 <strong>Forest Loss:</strong> 6,679 ha (clearing pine woods for housing)",
+            city_nsk_m2: "🌿 <strong>Greening Gain:</strong> 8,846 ha (Ob floodplain island overgrowth)",
+            city_nsk_m3: "🏗️ <strong>New Built-up:</strong> 2,883 ha (Akademgorodok campuses & junctions)",
+            city_nsk_m4: "⚡ <strong>Net:</strong> Balance +2,167 ha, but heavy impact on relict woods",
+            method_step_1_summary: "⚡ <strong>Quick take:</strong> Cloud-free summer composite 2016 vs 2026 without haze or shadows (QA60 + S2cloudless).",
+            method_step_2_summary: "⚡ <strong>Quick take:</strong> NDVI = canopy/chlorophyll (10m), NDBI = concrete/asphalt (SWIR). Difference prevents seasonal bias.",
+            method_step_3_summary: "⚡ <strong>Quick take:</strong> Pixel-by-pixel area aggregation using ee.Reducer.sum() at 10m grid within official city borders."
+          }
+        };
+
+        function setLanguage(newLang, animate = true) {
+          if (!I18N_DICT[newLang]) newLang = 'ru';
+          currentLang = newLang;
+          localStorage.setItem('geo_app_lang', currentLang);
+
+          const dict = I18N_DICT[currentLang];
+
+          if (animate) {
+            document.querySelectorAll('.i18n-node').forEach(node => {
+              node.classList.add('lang-switching-out');
+            });
+          }
+
+          setTimeout(() => {
+            // Set root HTML attribute for CSS rules and slider
+            document.documentElement.setAttribute('lang', currentLang);
+
+            // Update document title and meta description
+            if (dict.page_title) document.title = dict.page_title;
+            const metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc && dict.page_desc) metaDesc.setAttribute('content', dict.page_desc);
+
+            // Update text nodes
+            document.querySelectorAll('.i18n-node').forEach(node => {
+              const key = node.getAttribute('data-i18n');
+              if (key && dict[key] !== undefined) {
+                if (dict[key].includes('<')) {
+                  node.innerHTML = dict[key];
+                } else {
+                  node.textContent = dict[key];
+                }
+              }
+              const phKey = node.getAttribute('data-i18n-ph');
+              if (phKey && dict[phKey] !== undefined) {
+                node.setAttribute('placeholder', dict[phKey]);
+              }
+              if (animate) {
+                node.classList.remove('lang-switching-out');
+              }
+            });
+          }, animate ? 140 : 0);
+        }
+
+        // Initialize language from stored or default
+        setLanguage(currentLang, false);
+
+        // Bind language toggle button clicks
+        function bindLangToggle(btnId) {
+          const btn = document.getElementById(btnId);
+          if (!btn) return;
+          btn.addEventListener('click', (e) => {
+            // Check if specific pill was clicked
+            const pill = e.target.closest('.lang-pill-item');
+            if (pill) {
+              const target = pill.getAttribute('data-lang');
+              if (target && target !== currentLang) {
+                setLanguage(target, true);
+                return;
+              }
+            }
+            // Otherwise toggle
+            setLanguage(currentLang === 'ru' ? 'en' : 'ru', true);
+          });
+        }
+        bindLangToggle('lang-toggle-btn');
+
+
+        // --- 1. Interactive Satellite Research Assistant Widget ---
+        const chatFeed = document.getElementById('assistant-chat-feed');
+        const promptChips = document.querySelectorAll('.query-chip');
+        const assistantForm = document.getElementById('assistant-form');
+        const userInput = document.getElementById('assistant-user-input');
+
+        const knowledgeBase = {
+          loss: {
+            ru: {
+              question: "Какой город потерял больше всего лесов?",
+              answer: "По данным 10-летнего анализа Sentinel-2:<br />• <strong>Москва:</strong> наибольшая общая убыль растительности — <strong>35 942 га (359.4 км²)</strong> при приросте застройки 22 516 га.<br />• <strong>Санкт-Петербург:</strong> крупнейшая прямая убыль лесных массивов — <strong>16 181 га (161.8 км²)</strong> на фоне расширения пригородных агломераций (11 748 га).<br />• <strong>Екатеринбург:</strong> убыль 6 808 га (прирост 10 287 га).<br />• <strong>Новосибирск:</strong> убыль 6 679 га (прирост 8 846 га).<br />• <strong>Казань:</strong> наименьшие потери леса — 3 659 га."
+            },
+            en: {
+              question: "Which city lost the most forest?",
+              answer: "According to 10-year Sentinel-2 satellite analysis:<br />• <strong>Moscow:</strong> Highest total vegetation loss — <strong>35,942 ha (359.4 km²)</strong> with 22,516 ha of new construction.<br />• <strong>Saint Petersburg:</strong> Largest direct forest reduction — <strong>16,181 ha (161.8 km²)</strong> driven by peripheral suburbanization (11,748 ha).<br />• <strong>Yekaterinburg:</strong> 6,808 ha loss (with 10,287 ha gain).<br />• <strong>Novosibirsk:</strong> 6,679 ha loss (with 8,846 ha gain).<br />• <strong>Kazan:</strong> Minimal forest loss — 3,659 ha."
+            }
+          },
+          ndvi: {
+            ru: {
+              question: "Что такое индексы NDVI и NDBI?",
+              answer: "• <strong>NDVI</strong> (Normalized Difference Vegetation Index) = <code>(B8 - B4) / (B8 + B4)</code> — отражает содержание хлорофилла и плотность кроны деревьев (значения &gt; 0.6 соответствуют густому лесу).<br />• <strong>NDBI</strong> (Normalized Difference Built-up Index) = <code>(B11 - B8) / (B11 + B8)</code> — выявляет искусственные поверхности: бетон, асфальт и металлочерепицу."
+            },
+            en: {
+              question: "What are NDVI and NDBI indices?",
+              answer: "• <strong>NDVI</strong> (Normalized Difference Vegetation Index) = <code>(B8 - B4) / (B8 + B4)</code> — quantifies canopy chlorophyll vitality (values &gt; 0.6 indicate dense forest).<br />• <strong>NDBI</strong> (Normalized Difference Built-up Index) = <code>(B11 - B8) / (B11 + B8)</code> — distinguishes impervious urban surfaces such as asphalt, concrete, and roofing."
+            }
+          },
+          ekb: {
+            ru: {
+              question: "Что показал Екатеринбург за 10 лет?",
+              answer: "<strong>Екатеринбург: Анализ изменений за 10 лет</strong><br />• Убыль растительности: <strong>6 808 га (68.1 км²)</strong><br />• Прирост растительности: <strong>10 287 га (102.9 км²)</strong><br />• Прирост застройки: <strong>3 095 га (31.0 км²)</strong><br />Итог: положительный баланс биомассы (+3 479 га), хотя застройка интенсивно наступает на южные лесопарковые буферы."
+            },
+            en: {
+              question: "What did Yekaterinburg show in 10 years?",
+              answer: "<strong>Yekaterinburg: 10-Year Change Analysis</strong><br />• Vegetation loss: <strong>6,808 ha (68.1 km²)</strong><br />• Vegetation gain: <strong>10,287 ha (102.9 km²)</strong><br />• Built-up gain: <strong>3,095 ha (31.0 km²)</strong><br />Outcome: Positive biomass balance (+3,479 ha), though expansion exerts continuous pressure on southern forest belts."
+            }
+          },
+          msk: {
+            ru: {
+              question: "Каковы итоги мониторинга Москвы?",
+              answer: "<strong>Москва: Анализ изменений за 10 лет</strong><br />• Убыль растительности: <strong>35 942 га (359.4 км²)</strong><br />• Прирост растительности: <strong>13 017 га (130.2 км²)</strong><br />• Прирост застройки: <strong>22 516 га (225.2 км²)</strong><br />Итог: рекордный масштаб строительной экспансии в Новой Москве вдоль Калужского и Киевского шоссе."
+            },
+            en: {
+              question: "What are Moscow's monitoring outcomes?",
+              answer: "<strong>Moscow: 10-Year Change Analysis</strong><br />• Vegetation loss: <strong>35,942 ha (359.4 km²)</strong><br />• Vegetation gain: <strong>13,017 ha (130.2 km²)</strong><br />• Built-up gain: <strong>22,516 ha (225.2 km²)</strong><br />Outcome: Record volume of new urban construction concentrated in southwestern New Moscow."
+            }
+          },
+          clouds: {
+            ru: {
+              question: "Как отсекаются облака в Sentinel-2?",
+              answer: "Применяется аппаратная маска <code>QA60</code> (биты 10 и 11 детектируют плотную и перистую облачность) в связке с алгоритмом <code>S2cloudless</code>. Затем функция <code>ee.ImageCollection.median()</code> объединяет безоблачные пиксели всех летних пролетов за 3 месяца в чистейший композит без теней."
+            },
+            en: {
+              question: "How are clouds filtered in Sentinel-2?",
+              answer: "Sentinel-2 utilizes the <code>QA60</code> mask (bits 10 & 11 detecting opaque and cirrus clouds) coupled with the <code>S2cloudless</code> probability detector. The <code>ee.ImageCollection.median()</code> reducer aggregates clear pixels across all summer passes into shadow-free composites."
+            }
+          },
+          gee: {
+            ru: {
+              question: "В чем преимущество Google Earth Engine?",
+              answer: "Платформа Google Earth Engine выполняет параллельную обработку терабайтных массивов спутниковых растров на облачных серверах Google. Полный расчет матрицы изменений по площади 25 000 км² занимает всего 2–4 секунды вместо недель скачивания на локальный ПК."
+            },
+            en: {
+              question: "What is the advantage of Google Earth Engine?",
+              answer: "Google Earth Engine processes terabytes of multi-temporal satellite rasters in parallel on Google cloud infrastructure. Full pixel difference calculations for 25,000 km² take just 2–4 seconds rather than weeks of local downloads."
+            }
+          }
+        };
+
+        function addMessage(text, isUser = false) {
+          if (!chatFeed) return;
+          const bubble = document.createElement('div');
+          bubble.className = `feed-bubble ${isUser ? 'feed-user' : 'feed-bot'}`;
+          bubble.innerHTML = text;
+          chatFeed.appendChild(bubble);
+          chatFeed.scrollTop = chatFeed.scrollHeight;
+        }
+
+        function handleQuery(key, customText = '') {
+          const lang = currentLang;
+          let qText = customText;
+          let aText = '';
+
+          if (knowledgeBase[key]) {
+            const item = knowledgeBase[key][lang] || knowledgeBase[key]['ru'];
+            qText = item.question;
+            aText = item.answer;
+          } else {
+            const lower = customText.toLowerCase();
+            if (lower.includes('екатеринбург') || lower.includes('екб') || lower.includes('yekaterinburg')) {
+              aText = knowledgeBase.ekb[lang].answer;
+            } else if (lower.includes('москв') || lower.includes('moscow')) {
+              aText = knowledgeBase.msk[lang].answer;
+            } else if (lower.includes('питер') || lower.includes('петербург') || lower.includes('спб') || lower.includes('petersburg')) {
+              aText = lang === 'en'
+                ? "<strong>Saint Petersburg: 10-Year Balance</strong><br />• Forest loss: <strong>16,181 ha (161.8 km²)</strong><br />• Greenery gain: <strong>3,851 ha (38.5 km²)</strong><br />• New construction & reclamations: <strong>11,748 ha (117.5 km²)</strong><br />Dense peripheral developments (Murino, Kudrovo, Shushary) and Gulf reclamations continue to displace suburban green spaces."
+                : "<strong>Санкт-Петербург: Баланс за 10 лет</strong><br />• Убыль леса: <strong>16 181 га (161.8 км²)</strong><br />• Прирост зелени: <strong>3 851 га (38.5 км²)</strong><br />• Новая застройка и намывы: <strong>11 748 га (117.5 км²)</strong><br />Интенсивная субурбанизация (Мурино, Кудрово, Шушары) и морские намывы сократили лесной буфер агломерации.";
+            } else if (lower.includes('казан') || lower.includes('kazan')) {
+              aText = lang === 'en'
+                ? "<strong>Kazan: 10-Year Change Analysis</strong><br />• Forest loss: <strong>3,659 ha (36.6 km²)</strong><br />• Greenery gain: <strong>6,616 ha (66.2 km²)</strong><br />• New construction: <strong>1,492 ha (14.9 km²)</strong><br />Leader in ecological balance: greenery gain nearly doubles forest reduction."
+                : "<strong>Казань: Анализ изменений за 10 лет</strong><br />• Убыль леса: <strong>3 659 га (36.6 км²)</strong><br />• Прирост зелени: <strong>6 616 га (66.2 км²)</strong><br />• Новая застройка: <strong>1 492 га (14.9 км²)</strong><br />Лидер по балансу: прирост зелени почти в 2 раза превышает убыль леса.";
+            } else if (lower.includes('новосибирск') || lower.includes('нск') || lower.includes('novosibirsk')) {
+              aText = lang === 'en'
+                ? "<strong>Novosibirsk: 10-Year Change Analysis</strong><br />• Forest loss: <strong>6,679 ha (66.8 km²)</strong><br />• Greenery gain: <strong>8,846 ha (88.5 km²)</strong><br />• New construction: <strong>2,883 ha (28.8 km²)</strong><br />Solid floodplain vegetation gain, but ongoing pressure on relict pine forests from infrastructure and campus expansions."
+                : "<strong>Новосибирск: Анализ изменений за 10 лет</strong><br />• Убыль леса: <strong>6 679 га (66.8 км²)</strong><br />• Прирост зелени: <strong>8 846 га (88.5 км²)</strong><br />• Новая застройка: <strong>2 883 га (28.8 км²)</strong><br />Уверенный прирост в пойме Оби, но сохраняется давление на реликтовые боры.";
+            } else if (lower.includes('ndvi') || lower.includes('индекс') || lower.includes('ndbi') || lower.includes('index')) {
+              aText = knowledgeBase.ndvi[lang].answer;
+            } else if (lower.includes('потер') || lower.includes('убыль') || lower.includes('выруб') || lower.includes('loss')) {
+              aText = knowledgeBase.loss[lang].answer;
+            } else if (lower.includes('облак') || lower.includes('фильтр') || lower.includes('cloud')) {
+              aText = knowledgeBase.clouds[lang].answer;
+            } else {
+              aText = lang === 'en'
+                ? `Query response for "${customText}": Sentinel-2 Level-2A data confirms decadal trends of decentralized urban development. Please explore the <a href="#cities" style="color: var(--accent); font-weight: 700; text-decoration: underline;">Top-5 Cities</a> or inspect the <a href="#methodology" style="color: var(--accent); font-weight: 700; text-decoration: underline;">3-step methodology</a>.`
+                : `По запросу «${customText}»: спутниковые данные Sentinel-2 L2A подтверждают устойчивый тренд децентрализованной застройки. Для детального отчета перейдите к разделу <a href="#cities" style="color: var(--accent); font-weight: 700; text-decoration: underline;">«Топ-5 городов»</a> или изучите <a href="#methodology" style="color: var(--accent); font-weight: 700; text-decoration: underline;">методологию расчета</a>.`;
+            }
+          }
+
+          addMessage(qText, true);
+          setTimeout(() => {
+            addMessage(aText, false);
+          }, 300);
+        }
+
+        promptChips.forEach(chip => {
+          chip.addEventListener('click', () => {
+            const key = chip.getAttribute('data-q');
+            handleQuery(key);
+          });
+        });
+
+        if (assistantForm && userInput) {
+          assistantForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = userInput.value.trim();
+            if (!text) return;
+            handleQuery('', text);
+            userInput.value = '';
+          });
+        }
+
+
+        // --- 2. Methodology Accordion Toggle ---
+        const accNodes = document.querySelectorAll('.accordion-node');
+        accNodes.forEach(node => {
+          const header = node.querySelector('.accordion-header');
+          const badge = node.querySelector('.accordion-badge-state');
+          if (header) {
+            header.addEventListener('click', () => {
+              const wasActive = node.classList.contains('active');
+              accNodes.forEach(n => {
+                n.classList.remove('active');
+                const b = n.querySelector('.accordion-badge-state');
+                const h = n.querySelector('.accordion-header');
+                if (b) b.textContent = '[+]';
+                if (h) h.setAttribute('aria-expanded', 'false');
+              });
+
+              if (!wasActive) {
+                node.classList.add('active');
+                if (badge) badge.textContent = '[-]';
+                header.setAttribute('aria-expanded', 'true');
+              }
+            });
+          }
+        });
+
+
+        // --- 3. City Tabs Switching ---
+        const tabButtons = document.querySelectorAll('.city-tab-btn');
+        const panels = document.querySelectorAll('.city-panel');
+
+        tabButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const targetCity = button.getAttribute('data-city');
+
+            tabButtons.forEach(btn => {
+              btn.classList.remove('active');
+              btn.setAttribute('aria-selected', 'false');
+            });
+            panels.forEach(panel => panel.classList.remove('active'));
+
+            button.classList.add('active');
+            button.setAttribute('aria-selected', 'true');
+
+            const targetPanel = document.getElementById(`city-panel-${targetCity}`);
+            if (targetPanel) {
+              targetPanel.classList.add('active');
+            }
+          });
+        });
+
+
+        // --- 4. Mobile Menu Toggle ---
+        const mobileToggle = document.getElementById('mobile-toggle-btn');
+        const mobileMenu = document.getElementById('mobile-menu-dropdown');
+        if (mobileToggle && mobileMenu) {
+          mobileToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+          });
+
+          const mobileLinks = mobileMenu.querySelectorAll('a');
+          mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+              mobileMenu.classList.remove('open');
+            });
+          });
+        }
+
+
+        // --- 5. Lightbox Modal for Fullscreen Map Inspection ---
+        const modalContainer = document.getElementById('map-modal-container');
+        const modalImg = document.getElementById('map-modal-image');
+        const modalTitleText = document.getElementById('map-modal-title-text');
+        const modalCloseBtn = document.getElementById('map-modal-close-btn');
+
+        window.openMapModal = function (src, title) {
+          if (!modalContainer || !modalImg) return;
+          modalImg.onerror = function () {
+            if (!this.dataset.fallbackTried) {
+              this.dataset.fallbackTried = '1';
+              const s = this.src;
+              if (s.includes('Москва') || s.includes('%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0')) this.src = '/moscow.png';
+              else if (s.includes('Санкт') || s.includes('%D0%A1%D0%B0%D0%BD%D0%BA%D1%82')) this.src = '/spb.png';
+              else if (s.includes('Казань') || s.includes('%D0%9A%D0%B0%D0%B7%D0%B0%D0%BD%D1%8C')) this.src = '/kazan.png';
+              else if (s.includes('Новосибирск') || s.includes('%D0%9D%D0%BE%D0%B2%D0%BE%D1%81%D0%B8%D0%B1%D0%B8%D1%80%D1%81%D0%BA')) this.src = '/novosibirsk.png';
+              else if (s.includes('Екатеринбург') || s.includes('%D0%95%D0%BA%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%BD%D0%B1%D1%83%D1%80%D0%B3')) this.src = '/ekaterinburg.png';
+            }
+          };
+          modalImg.dataset.fallbackTried = '';
+          modalImg.src = src;
+          modalImg.alt = title || 'Спутниковый снимок';
+          if (modalTitleText) modalTitleText.textContent = title || 'Спутниковая карта Google Earth Engine';
+          modalContainer.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        };
+
+        function closeModal() {
+          if (!modalContainer) return;
+          modalContainer.classList.remove('open');
+          document.body.style.overflow = '';
+          if (modalImg) modalImg.src = '';
+        }
+
+        if (modalCloseBtn) {
+          modalCloseBtn.addEventListener('click', closeModal);
+        }
+        if (modalContainer) {
+          modalContainer.addEventListener('click', (e) => {
+            if (e.target === modalContainer) {
+              closeModal();
+            }
+          });
+        }
+        window.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && modalContainer && modalContainer.classList.contains('open')) {
+            closeModal();
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
