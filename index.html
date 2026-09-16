@@ -2571,6 +2571,8 @@
           padding: 2px 5px;
         }
       }
+
+
     </style>
   </head>
   <body>
@@ -2584,8 +2586,9 @@
         </a>
 
         <nav class="nav-links" id="main-nav">
-          <a href="#assistant" id="nav-link-assistant" class="i18n-node" data-i18n="nav_assistant">Гео-ассистент</a>
+          <a href="quiz.html" id="nav-link-quiz" class="i18n-node" data-i18n="nav_quiz">Тест: Твой город</a>
           <a href="#cities" id="nav-link-cities" class="i18n-node" data-i18n="nav_cities">Города</a>
+          <a href="#assistant" id="nav-link-assistant" class="i18n-node" data-i18n="nav_assistant">Гео-ассистент</a>
           <a href="#methodology" id="nav-link-methodology" class="i18n-node" data-i18n="nav_methodology">Методология</a>
         </nav>
 
@@ -2619,8 +2622,9 @@
 
       <!-- Mobile dropdown -->
       <div class="mobile-menu" id="mobile-menu-dropdown">
-        <a href="#assistant" class="mobile-nav-link i18n-node" data-i18n="nav_assistant">Гео-ассистент</a>
+        <a href="quiz.html" class="mobile-nav-link i18n-node" data-i18n="nav_quiz">Тест: Твой город</a>
         <a href="#cities" class="mobile-nav-link i18n-node" data-i18n="nav_cities">Города</a>
+        <a href="#assistant" class="mobile-nav-link i18n-node" data-i18n="nav_assistant">Гео-ассистент</a>
         <a href="#methodology" class="mobile-nav-link i18n-node" data-i18n="nav_methodology">Методология</a>
       </div>
     </header>
@@ -2648,8 +2652,8 @@
             <a href="#cities" class="btn btn-accent i18n-node" id="hero-btn-cities" data-i18n="hero_btn_cities">
               Данные 5 городов →
             </a>
-            <a href="#assistant" class="btn btn-secondary i18n-node" id="hero-btn-assistant" data-i18n="hero_btn_assistant">
-              Спутниковый гео-ассистент ↓
+            <a href="quiz.html" class="btn btn-secondary i18n-node" id="hero-btn-quiz" data-i18n="hero_btn_quiz">
+              Тест: Твой город ✨
             </a>
           </div>
         </div>
@@ -3702,12 +3706,15 @@
             city_nsk_m4: "⚡ <strong>Итог:</strong> Баланс +2 167 га, но растет антропогенное давление",
             method_step_1_summary: "⚡ <strong>Коротко:</strong> Безоблачный летний композит 2016 vs 2026 без теней и дымки (QA60 + S2cloudless).",
             method_step_2_summary: "⚡ <strong>Коротко:</strong> NDVI = зелень (10 м/пикс), NDBI = бетон и асфальт (SWIR). Сравнение исключает сезонные погрешности.",
-            method_step_3_summary: "⚡ <strong>Коротко:</strong> Попиксельный подсчет площадей через ee.Reducer.sum() с шагом 10 м в официальных границах каждого города."
+            method_step_3_summary: "⚡ <strong>Коротко:</strong> Попиксельный подсчет площадей через ee.Reducer.sum() с шагом 10 м в официальных границах каждого города.",
+            hero_btn_quiz: "Тест: Твой город ✨",
+            nav_quiz: "Тест: Твой город"
           },
           en: {
             page_title: "Satellite Monitoring of Environmental Dynamics in Metropolises (2016–2026)",
             page_desc: "Application of Sentinel-2 satellite imagery for multi-year monitoring of natural processes and urban transformation across 5 Russian metropolitan areas.",
             nav_brand: "Satellite Monitoring",
+            nav_quiz: "City Quiz",
             nav_assistant: "Geo-Assistant",
             nav_comparison: "Method Comparison",
             nav_cities: "Cities",
@@ -3719,6 +3726,7 @@
             hero_desc: "Satellite monitoring of environmental dynamics across Russian metropolitan areas",
             hero_btn_cities: "5 Cities Data →",
             hero_btn_assistant: "Satellite Geo-Assistant ↓",
+            hero_btn_quiz: "Quiz: Your City ✨",
             assistant_eyebrow: "Interactive Analysis",
             assistant_title: "Satellite Geo-Assistant",
             assistant_subtitle: "Ask a research query on ecological network dynamics, NDVI/NDBI indices, and monitoring metrics across 5 metropolitan areas.",
@@ -3869,6 +3877,13 @@
             method_step_3_summary: "⚡ <strong>Quick take:</strong> Pixel-by-pixel area aggregation using ee.Reducer.sum() at 10m grid within official city borders."
           }
         };
+
+        // Listen for language updates across windows/tabs
+        window.addEventListener('storage', (e) => {
+          if (e.key === 'geo_app_lang' && e.newValue && e.newValue !== currentLang) {
+            setLanguage(e.newValue, false);
+          }
+        });
 
         function setLanguage(newLang, animate = true) {
           if (!I18N_DICT[newLang]) newLang = 'ru';
